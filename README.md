@@ -35,6 +35,8 @@ npm run db:seed
 npm run db:export-demo
 ```
 
+Migrations from `student-auth` onward depend on Supabase's auth objects (`auth.users`, `auth.uid()`, the `anon`/`authenticated` roles), so `db:migrate` stops with a clear error on plain PostgreSQL. For local work either use the disposable `_test` database below, where `npm run db:test-auth-shim` installs a test-only stand-in before migrating, or run the Supabase CLI's local stack for the real auth schema. The stand-in refuses any database whose name doesn't end in `_test` and any non-local host.
+
 The helper binds PostgreSQL 17 to localhost:55432 and retains a named volume. `npm run db:stop` stops the container without deleting data. Alternatively set DATABASE_URL to your own PostgreSQL development database. Seed records are fictional and reruns preserve existing rows. Remote seeding requires an intentional ALLOW_DEMO_SEED=1. Static export is limited to the demo campus and explicitly selected public fields; it never exports users or messages.
 
 ## Verify
@@ -50,6 +52,7 @@ Database tests need a dedicated database whose name ends in `_test`. For the loc
 ```bash
 podman exec basic-needs-finder-postgres createdb -U campus basic_needs_test
 export DATABASE_URL='postgresql://campus:campus_local_only@127.0.0.1:55432/basic_needs_test?schema=public'
+npm run db:test-auth-shim
 npm run db:migrate
 npm run db:seed
 npm run test:db

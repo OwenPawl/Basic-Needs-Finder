@@ -463,3 +463,57 @@ test("a profile cannot take over another account's email record", async () => {
     );
   });
 });
+
+test("an unverified staff membership is not activated by the email check", async () => {
+  await transaction(async (db) => {
+    const subject = await account(db);
+    await as(db, subject);
+    await rpc(db, "upsert_profile", ["Pending staff"]);
+    await asOwner(db);
+    await db.query(
+      `INSERT INTO "Membership" (id, "campusId", "userId", role)
+       SELECT gen_random_uuid(), $1, id, 'STAFF' FROM "User" WHERE "authSubject" = $2`,
+      [DEMO_CAMPUS, subject],
+    );
+    await as(db, subject);
+    await rejects(
+      db,
+      () => rpc(db, "verify_campus_membership", ["demo-campus"]),
+      code("INVALID_STATE"),
+    );
+    const session = await rpc(db, "my_session");
+    assert.equal(session.memberships[0].verified, false);
+    assert.deepEqual(session.memberships[0].staff_location_ids, []);
+  });
+});
+
+test("migration bookkeeping and future tables are not exposed to browser roles", async () => {
+  await transaction(async (db) => {
+    await as(
+      db,
+      await (async () => {
+        await asOwner(db);
+        return account(db);
+      })(),
+    );
+    await rejects(
+      db,
+      () => db.query('SELECT 1 FROM "_prisma_migrations" LIMIT 1'),
+      {
+        code: "42501",
+      },
+    );
+    await asOwner(db);
+    const rls = await db.query(
+      `SELECT relrowsecurity FROM pg_class WHERE oid = '"_prisma_migrations"'::regclass`,
+    );
+    assert.equal(rls.rows[0].relrowsecurity, true);
+    // Default privileges for this role revoke browser access on new tables.
+    await db.query('CREATE TABLE public."FutureTableProbe" (id int)');
+    const grants = await db.query(
+      `SELECT has_table_privilege('authenticated', 'public."FutureTableProbe"', 'SELECT') AS auth_read,
+              has_table_privilege('anon', 'public."FutureTableProbe"', 'SELECT') AS anon_read`,
+    );
+    assert.deepEqual(grants.rows[0], { auth_read: false, anon_read: false });
+  });
+});

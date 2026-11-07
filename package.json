@@ -17,6 +17,7 @@
     "db:start": "node scripts/database.mjs start",
     "db:stop": "node scripts/database.mjs stop",
     "db:generate": "prisma generate",
+    "db:test-auth-shim": "node scripts/test-auth-shim.mjs",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "prisma db seed",
     "db:export-demo": "tsx scripts/export-demo.ts"
@@ -24,6 +25,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "7.10.1",
     "@prisma/client": "7.10.1",
+    "@supabase/supabase-js": "2.119.0",
     "dotenv": "18.0.9",
     "lucide-react": "1.70.0",
     "next": "16.4.5",

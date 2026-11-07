@@ -1,43 +1,21 @@
 -- student-auth: verified campus membership, location-scoped staff authority,
 -- and campus-aware row-level security for the Supabase browser roles.
 --
--- Hosted Supabase already provides the anon/authenticated roles, auth.users,
--- and auth.uid(). Plain PostgreSQL (local, CI) gets a minimal compatible shim,
--- created only when the real objects are absent, so this migration never
--- replaces Supabase's own definitions.
-
+-- This migration depends on the auth objects Supabase manages: the anon and
+-- authenticated roles, auth.users, and auth.uid(). It never creates or replaces
+-- them. Plain PostgreSQL test databases get a stand-in from
+-- scripts/test-auth-shim.sql, run by `npm run db:test-auth-shim` BEFORE
+-- `prisma migrate deploy`; without real or stand-in objects this fails here.
 DO $$
+DECLARE missing TEXT[] := ARRAY[]::TEXT[];
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
-    CREATE ROLE anon NOLOGIN;
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN
-    CREATE ROLE authenticated NOLOGIN;
-  END IF;
-END $$;
-
-CREATE SCHEMA IF NOT EXISTS auth;
-
-DO $$
-BEGIN
-  IF to_regclass('auth.users') IS NULL THEN
-    -- Shim only: the subset of Supabase's auth.users used below.
-    CREATE TABLE auth.users (
-      id UUID PRIMARY KEY,
-      email TEXT,
-      email_confirmed_at TIMESTAMPTZ
-    );
-  END IF;
-  IF to_regprocedure('auth.uid()') IS NULL THEN
-    -- Same claim lookup as Supabase's auth.uid().
-    CREATE FUNCTION auth.uid() RETURNS UUID
-    LANGUAGE sql STABLE
-    AS $fn$
-      SELECT nullif(coalesce(
-        current_setting('request.jwt.claim.sub', true),
-        nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub'
-      ), '')::uuid
-    $fn$;
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN missing := array_append(missing, 'role anon'); END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN missing := array_append(missing, 'role authenticated'); END IF;
+  IF to_regclass('auth.users') IS NULL THEN missing := array_append(missing, 'table auth.users'); END IF;
+  IF to_regprocedure('auth.uid()') IS NULL THEN missing := array_append(missing, 'function auth.uid()'); END IF;
+  IF cardinality(missing) > 0 THEN
+    RAISE EXCEPTION 'student_auth migration needs Supabase auth objects; missing: %', array_to_string(missing, ', ')
+      USING HINT = 'On Supabase these exist already. For a disposable *_test database run npm run db:test-auth-shim first.';
   END IF;
 END $$;
 
@@ -237,10 +215,20 @@ BEGIN
   END IF;
   user_row := app.current_user_id();
   IF user_row IS NULL THEN PERFORM app.fail('VALIDATION_ERROR', 'create a profile first'); END IF;
+  -- An operator-created STAFF/ADMIN row that is still unverified must not be
+  -- activated by the email-domain check alone.
+  IF EXISTS (
+    SELECT 1 FROM public."Membership" m
+    WHERE m."userId" = user_row AND m."campusId" = campus_row.id
+      AND m."verifiedAt" IS NULL AND m.role <> 'STUDENT'
+  ) THEN
+    PERFORM app.fail('INVALID_STATE', 'staff memberships are verified by a campus operator');
+  END IF;
   INSERT INTO public."Membership" (id, "campusId", "userId", role, "verifiedAt")
   VALUES (gen_random_uuid(), campus_row.id, user_row, 'STUDENT', now())
   ON CONFLICT ("userId", "campusId") DO UPDATE
-    SET "verifiedAt" = coalesce(public."Membership"."verifiedAt", now());
+    SET "verifiedAt" = coalesce(public."Membership"."verifiedAt", now())
+    WHERE public."Membership".role = 'STUDENT' OR public."Membership"."verifiedAt" IS NOT NULL;
   RETURN public.my_session();
 END $$;
 
@@ -314,6 +302,15 @@ END $$;
 -- Privileges: anon gets nothing (the static catalog serves anonymous browsing).
 -- authenticated may only read through the policies below and call the RPCs.
 REVOKE ALL ON ALL TABLES IN SCHEMA public FROM anon, authenticated;
+REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM anon, authenticated;
+-- Supabase grants anon/authenticated access to tables created later in public;
+-- revoke that default for objects created by this migration role. New tables
+-- still need RLS enabled and explicit grants in their own migration.
+ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON TABLES FROM anon, authenticated;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON SEQUENCES FROM anon, authenticated;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC, anon, authenticated;
+-- Prisma's bookkeeping table is never browser-readable.
+ALTER TABLE "_prisma_migrations" ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON ALL FUNCTIONS IN SCHEMA app FROM PUBLIC;
 REVOKE ALL ON FUNCTION
   public.my_session(), public.upsert_profile(TEXT), public.verify_campus_membership(TEXT),
