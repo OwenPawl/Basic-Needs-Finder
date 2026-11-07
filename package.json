@@ -13,7 +13,7 @@
     "preview": "node scripts/preview.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:db": "tsx --test tests/database.test.ts",
+    "test:db": "tsx --test tests/database.test.ts tests/inventory.test.ts",
     "db:start": "node scripts/database.mjs start",
     "db:stop": "node scripts/database.mjs stop",
     "db:generate": "prisma generate",
