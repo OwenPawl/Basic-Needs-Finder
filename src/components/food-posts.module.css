@@ -1,0 +1,363 @@
+.wide {
+  width: min(1040px, 100%);
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+.header h1 {
+  margin: 0 0 8px;
+}
+.eyebrow {
+  margin: 0 0 6px;
+  color: #b06d00;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.shareButton {
+  width: auto;
+  flex-shrink: 0;
+  padding: 12px 24px;
+}
+.callout {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 14px;
+  background: #edf5fa;
+}
+.callout p {
+  margin: 0;
+}
+.safety {
+  margin: -4px 0 18px;
+  padding: 12px 14px;
+  border-left: 4px solid #f2b23e;
+  border-radius: 8px;
+  background: #fff8ea;
+  color: #5b4510;
+  font-size: 15px;
+}
+.form h2 {
+  margin: 8px 0 12px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #07365b;
+  font-size: 22px;
+  outline: none;
+}
+.form textarea {
+  min-height: 72px;
+  padding: 12px 14px;
+  border: 2px solid #dbe3e8;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  resize: vertical;
+}
+.form textarea:focus {
+  outline: none;
+  border-color: #006bab;
+  box-shadow: 0 0 0 4px rgba(0, 107, 171, 0.18);
+}
+.kind {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+  margin: 0 0 20px;
+  padding: 0;
+  border: 0;
+}
+.kind legend {
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 15px;
+}
+.kind label {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border: 2px solid #dbe3e8;
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+.kind label span {
+  display: flex;
+  flex-direction: column;
+}
+.kind small {
+  color: #586b78;
+}
+.kind input {
+  margin-top: 4px;
+  accent-color: #006bab;
+}
+.kindOn {
+  border-color: #006bab !important;
+  background: #edf5fa;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0 14px;
+}
+.photoRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.photoChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 6px 6px 12px;
+  border-radius: 999px;
+  background: #edf5fa;
+  color: #07365b;
+  font-weight: 600;
+}
+.photoChip button {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+.uploadButton {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 2px dashed #8bb4cd;
+  border-radius: 12px;
+  color: #006bab;
+  font-weight: 700;
+  cursor: pointer;
+}
+.uploadButton input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.uploadButton:focus-within {
+  outline: 3px solid #f2b23e;
+  outline-offset: 2px;
+}
+.formActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.formActions > * {
+  margin-top: 0 !important;
+}
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.filters button {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid #c9d8e2;
+  border-radius: 999px;
+  background: #fff;
+  color: #07365b;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease;
+}
+.filters button:active {
+  transform: scale(0.96);
+}
+.filters button[aria-pressed="true"] {
+  background: #07365b;
+  border-color: #07365b;
+  color: #fff;
+}
+.filters button:focus-visible {
+  outline: 3px solid #f2b23e;
+  outline-offset: 2px;
+}
+.count {
+  margin: 14px 0 12px;
+  color: #586b78;
+  font-size: 14px;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #dbe3e8;
+  border-radius: 16px;
+  background: #fff;
+  transition:
+    transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.25s ease;
+}
+.card:hover,
+.card:focus-within {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 36px -24px rgba(7, 54, 91, 0.45);
+}
+.photo {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: linear-gradient(135deg, #edf5fa, #fff3dc);
+}
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px 18px;
+  flex: 1;
+}
+.cardBody h2 {
+  margin: 4px 0 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 20px;
+  color: #07365b;
+}
+.cardBody p {
+  margin: 0;
+}
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.kindBadge,
+.state {
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.kindBadge {
+  background: #fff3dc;
+  color: #7a4d00;
+}
+.state {
+  background: #eef1f3;
+  color: #45535c;
+}
+.available {
+  background: #e3f4ea;
+  color: #1f6b45;
+}
+.upcoming {
+  background: #edf5fa;
+  color: #125d87;
+}
+.expired,
+.closed,
+.removed {
+  background: #f2f2f2;
+  color: #5a5a5a;
+}
+.meta {
+  color: #586b78;
+  font-size: 14px;
+  font-weight: 600;
+}
+.facts {
+  display: grid;
+  gap: 4px;
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+.facts div {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 8px;
+}
+.facts dt {
+  color: #586b78;
+}
+.facts dd {
+  margin: 0;
+}
+.by {
+  color: #586b78;
+  font-size: 13px;
+}
+.cardActions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+}
+.cardActions > * {
+  margin-top: 0 !important;
+  min-height: 44px;
+  font-size: 15px;
+}
+.unavailable {
+  color: #5a5a5a;
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card {
+    animation: food-in 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .card:nth-child(2) {
+    animation-delay: 0.05s;
+  }
+  .card:nth-child(3) {
+    animation-delay: 0.1s;
+  }
+  .card:nth-child(n + 4) {
+    animation-delay: 0.15s;
+  }
+  .form {
+    animation: food-in 0.35s ease both;
+  }
+}
+@keyframes food-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (max-width: 640px) {
+  .header {
+    flex-direction: column;
+  }
+  .shareButton {
+    width: 100%;
+  }
+  .formActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

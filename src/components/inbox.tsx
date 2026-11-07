@@ -91,8 +91,18 @@ export function Inbox() {
       await loadList();
       const params = new URLSearchParams(window.location.search);
       const listing = params.get("listing");
+      const food = params.get("food");
       const conversation = params.get("conversation");
-      if (listing) {
+      if (food) {
+        const { data: started, error: e } = await client.current!.rpc(
+          "start_food_conversation",
+          { post_id: food },
+        );
+        if (e)
+          return setError(friendly(e, "We couldn’t start that conversation."));
+        await loadList();
+        await open(started.conversation_id);
+      } else if (listing) {
         const { data: started, error: e } = await client.current!.rpc(
           "start_conversation",
           { listing_id: listing },
