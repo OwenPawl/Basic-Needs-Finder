@@ -52,6 +52,19 @@ type Report = {
   listing_id: string;
   resolved_at: string | null;
 };
+type ModerationEntry = {
+  action: "remove_listing" | "restore_listing" | "dismiss_report";
+  listing_id: string;
+  title: string;
+  reason: string;
+  at: string;
+};
+// Moderation RPCs (202611070011_staff_moderation) take no idempotency key.
+const UNKEYED = new Set([
+  "exchange_resolve_report",
+  "staff_moderate_listing",
+  "staff_dismiss_report",
+]);
 type StaffData = {
   lots: Lot[];
   reservations: Reservation[];
@@ -71,13 +84,15 @@ export function ExchangeOperations({ staff = false }: { staff?: boolean }) {
   const [busy, setBusy] = useState(false);
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [reasons, setReasons] = useState<Record<string, string>>({});
+  const [history, setHistory] = useState<ModerationEntry[]>([]);
   const keys = useRef(new Map<string, string>());
   const running = useRef(false);
   const reload = useCallback(async () => {
     try {
       const client = getSupabaseClient();
       if (!client) throw new Error("Exchange setup is still in progress.");
-      const { data: auth, error: sessionError } = await client.auth.getSession();
+      const { data: auth, error: sessionError } =
+        await client.auth.getSession();
       if (sessionError)
         throw new Error("We couldn't check your sign-in. Please try again.");
       if (!auth.session) {
@@ -98,6 +113,17 @@ export function ExchangeOperations({ staff = false }: { staff?: boolean }) {
         });
         if (r.error) throw new Error(exchangeError(r.error));
         setStock(r.data as StaffData);
+        const logs = await Promise.all(
+          (r.data as StaffData).locations.map((p) =>
+            client.rpc("staff_moderation_history", { location_id: p.id }),
+          ),
+        );
+        setHistory(
+          logs
+            .flatMap((h) => (h.error ? [] : (h.data as ModerationEntry[])))
+            .sort((a, b) => b.at.localeCompare(a.at))
+            .slice(0, 20),
+        );
         setPhotos(
           await signListingPhotos(
             (r.data as StaffData).lots.flatMap((l) => l.images),
@@ -141,7 +167,7 @@ export function ExchangeOperations({ staff = false }: { staff?: boolean }) {
     try {
       const result = await getSupabaseClient()!.rpc(name, {
         ...args,
-        ...(name === "exchange_resolve_report" ? {} : { idempotency_key: key }),
+        ...(UNKEYED.has(name) ? {} : { idempotency_key: key }),
       });
       if (result.error) throw new Error(exchangeError(result.error));
       if (result.data?.error) {
@@ -484,23 +510,84 @@ export function ExchangeOperations({ staff = false }: { staff?: boolean }) {
                 <Link href={`/exchange/?listing=${r.listing_id}`}>
                   View listing
                 </Link>
-                <button
-                  className="button secondary"
-                  disabled={busy}
-                  onClick={() =>
-                    void command(
-                      "exchange_resolve_report",
-                      { report_id: r.id },
-                      "Report marked reviewed.",
-                    )
-                  }
-                >
-                  Mark reviewed
-                </button>
+                <label>
+                  Decision reason
+                  <input
+                    value={reasons[`report:${r.id}`] ?? ""}
+                    minLength={3}
+                    maxLength={500}
+                    onChange={(e) =>
+                      setReasons((x) => ({
+                        ...x,
+                        [`report:${r.id}`]: e.target.value,
+                      }))
+                    }
+                  />
+                </label>
+                <div className="operations-buttons">
+                  <button
+                    className="button"
+                    disabled={
+                      busy ||
+                      (reasons[`report:${r.id}`] ?? "").trim().length < 3
+                    }
+                    onClick={() =>
+                      void command(
+                        "staff_moderate_listing",
+                        {
+                          listing_id: r.listing_id,
+                          action: "remove",
+                          reason: (reasons[`report:${r.id}`] ?? "").trim(),
+                          report_id: r.id,
+                        },
+                        "Listing removed, its stock withdrawn, and the report closed.",
+                      )
+                    }
+                  >
+                    Remove listing
+                  </button>
+                  <button
+                    className="button secondary"
+                    disabled={
+                      busy ||
+                      (reasons[`report:${r.id}`] ?? "").trim().length < 3
+                    }
+                    onClick={() =>
+                      void command(
+                        "staff_dismiss_report",
+                        {
+                          report_id: r.id,
+                          reason: (reasons[`report:${r.id}`] ?? "").trim(),
+                        },
+                        "Report dismissed with your reason.",
+                      )
+                    }
+                  >
+                    Dismiss report
+                  </button>
+                </div>
               </article>
             ))}
           {!stock.reports.some((r) => !r.resolved_at) && (
             <p>No unresolved reports at your assigned desks.</p>
+          )}
+          {history.length > 0 && (
+            <>
+              <h3>Recent moderation</h3>
+              <ul className="operations-history">
+                {history.map((h, i) => (
+                  <li key={`${h.listing_id}-${h.at}-${i}`}>
+                    {new Date(h.at).toLocaleString()} ·{" "}
+                    {h.action === "dismiss_report"
+                      ? "Report dismissed"
+                      : h.action === "remove_listing"
+                        ? "Listing removed"
+                        : "Listing restored"}{" "}
+                    · {h.title}: {h.reason}
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
         </section>
       )}
