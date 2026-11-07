@@ -179,3 +179,15 @@
     margin-top: 12px;
   }
 }
+
+.operations-history {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.operations-history li {
+  padding: 6px 0;
+  border-top: 1px solid #dbe3e8;
+  font-size: 0.9rem;
+}
