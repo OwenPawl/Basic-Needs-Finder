@@ -127,12 +127,14 @@ async function campus(students = 2) {
   const id = randomUUID();
   const south = randomUUID();
   await db.query(
-    'INSERT INTO "Campus" (id,slug,name,"emailDomains","isDemo") VALUES ($1,$1,$2,$3,true),($4,$4,$5,$6,true)',
+    'INSERT INTO "Campus" (id,slug,name,"emailDomains","isDemo") VALUES ($1,$2,$3,$4,true),($5,$6,$7,$8,true)',
     [
       id,
+      `north-${id}`,
       "Fictional North Campus",
       ["north.example.invalid"],
       south,
+      `south-${south}`,
       "Fictional South Campus",
       ["south.example.invalid"],
     ],
