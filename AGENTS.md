@@ -5,7 +5,7 @@ Read README.md, docs/MVP.md, docs/DOMAIN.md, and the current task packet before 
 - Check the current repository state first. Preserve teammates' changes and keep work in a task-specific branch using the `codex/` prefix.
 - Confirm live mesh ownership before shared work. Export a packet and checkpoint before handoff. Mesh tokens and local `.agent/` state never belong in this repository.
 - Implement the assigned bounded task. Coordinate shared schema and interface changes before editing them across branches.
-- Current user priority: real WWU/Bellingham food-first resources with anonymous browsing, official sources, directions/transit and printable plans. No AI images or fictional offerings on the public page. The original exchange remains follow-on work; preserve its contracts and tests.
+- Current user priority: real WWU/Bellingham food-first resources with anonymous browsing, official sources, directions/transit and printable plans. No AI images or fictional offerings on the public page. The user explicitly reaffirmed that goods offers and requests from the original plan are required now alongside the directory; preserve and implement its contracts and tests.
 - Enforce authorization and validation on the server. Avoid public contact details, hardcoded secrets, and production email-verification bypasses.
 - Preserve the inventory invariants in docs/DOMAIN.md. Test concurrency against the actual database behavior, not just an in-memory imitation.
 - Add meaningful tests for stock receipt, last-item contention, repeated commands, cancellation, expiry, pickup, and unauthorized access as those features are implemented.

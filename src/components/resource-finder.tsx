@@ -1,4 +1,6 @@
 "use client";
+import Link from "next/link";
+import "./goods-exchange.css";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
@@ -118,7 +120,7 @@ export function ResourceFinder({ resources }: { resources: CampusResource[] }) {
         </a>
         <nav aria-label="Main navigation">
           <a href="#finder">Find support</a>
-          <a href="#getting-there">Getting there</a>
+          <Link href="/exchange/">Give &amp; find goods</Link>
           <a href="#about">About</a>
         </nav>
         <a href="#my-plan" className="plan-link">
@@ -127,6 +129,18 @@ export function ResourceFinder({ resources }: { resources: CampusResource[] }) {
         </a>
       </header>
       <main>
+        <section className="exchange-banner">
+          <div>
+            <h2>Have something to give? Need something?</h2>
+            <p>
+              Share clothing, school supplies, household essentials and food
+              with other Western students. Offers and requests belong here, too.
+            </p>
+          </div>
+          <Link href="/exchange/" className="button primary">
+            Open the goods exchange <ArrowRight size={17} />
+          </Link>
+        </section>
         <section className="hero" aria-labelledby="hero-title">
           <div className="hero-copy">
             <p className="eyebrow">

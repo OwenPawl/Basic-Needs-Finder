@@ -6,7 +6,7 @@ Food and basic-needs support for Western Washington University students, on camp
 
 **Current status:** an anonymous public directory with 11 real WWU/Bellingham resources, search, location/type/service-day filters, provider details, directions, and a printable/downloadable resource plan. Each resource links to an official source with a checked date. No AI imagery, fabricated public inventory, student-data collection, location request, or analytics. Plan selections live in page memory and clear on reload.
 
-Live student accounts, shared inventory, messaging, reservations, and staff operations are separate team tasks and are not connected to the hosted Supabase project yet. The PostgreSQL foundation and fictional test fixtures remain available for their implementation; those fixtures are not imported into the public directory.
+The goods exchange at `/exchange/` implements offers, requests, owner edits, real photo uploads, and category/location/availability search. Offers remain pledged until staff confirms receipt. `/account/` implements verified campus sign-in. Hosted configuration and the complete receipt/reservation/messaging flow must be verified before describing them as operational. The PostgreSQL foundation and fictional test fixtures remain available for their implementation; those fixtures are not imported into the public directory.
 
 ## Run the preview
 
@@ -74,3 +74,9 @@ Create the test database only once. Tests roll back their transactions. They val
 - [Agent contribution instructions](AGENTS.md)
 
 Claim work on the mesh, use a `codex/` task branch, and submit pinned evidence for independent review. Agents use their owners' GitHub authentication. Never commit mesh tokens, environment secrets, or real student data. An offered item becomes reservable only after staff confirms receipt; available stock must be derived from physical inventory and active holds.
+
+## Goods exchange setup
+
+Apply production migrations to Supabase, then run `scripts/wwu-campus.sql` for the real WWU campus and seven user-selected residential mail desks. It creates no users, staff assignments, listings, or inventory. Do not run the demo seed against the live project. Desk locations follow WWU Housing; this independent project does not imply university approval of donation handling. Set the browser publishable key and URL as documented in `docs/AUTH.md`. Never put a secret or service-role key in a frontend.
+
+For SQL tests only, run `BNF_ALLOW_TEST_SHIMS=1 npm run db:test-storage` after the guarded auth shim and before migrations. Both fixtures are restricted to local `_test` databases. The Storage fixture validates metadata/RLS, not the real upload HTTP service.
