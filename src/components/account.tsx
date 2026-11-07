@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { errorCode, getSupabaseClient } from "@/lib/supabase";
+import { authErrorMessage } from "@/lib/auth-errors";
 import { parseSession, sessionStage, type Session } from "@/lib/session";
 import styles from "./account.module.css";
 
@@ -62,8 +63,9 @@ export function Account() {
     if (!auth.session) return go("email");
     const { data, error: rpcError } = await client.rpc("my_session");
     if (rpcError) {
+      go("email");
       setError(friendly(rpcError, "We couldn’t load your account."));
-      return go("email");
+      return;
     }
     const parsed = parseSession(data);
     setSession(parsed);
@@ -84,8 +86,11 @@ export function Account() {
       setStep("unavailable");
       return;
     }
-    void refresh();
-  }, [refresh]);
+    void refresh().catch(() => {
+      go("email");
+      setError("We couldn’t load your account. Please try again.");
+    });
+  }, [go, refresh]);
 
   async function run(action: () => Promise<void>) {
     setBusy(true);
@@ -93,6 +98,8 @@ export function Account() {
     setNotice("");
     try {
       await action();
+    } catch {
+      setError("We couldn’t finish that request. Please try again.");
     } finally {
       setBusy(false);
     }
@@ -101,15 +108,18 @@ export function Account() {
   const sendCode = (event: { preventDefault(): void }) => {
     event.preventDefault();
     void run(async () => {
+      const address = email.trim().toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)) {
+        return setError("Enter a complete email address, such as yourname@wwu.edu.");
+      }
       const { error: otpError } = await supabase.current!.auth.signInWithOtp({
-        email: email.trim(),
+        email: address,
         options: { shouldCreateUser: true },
       });
-      if (otpError)
-        return setError(
-          "We couldn’t send a code. Check the email address and try again.",
-        );
-      setNotice(`We sent a 6-digit code to ${email.trim()}.`);
+      if (otpError) return setError(authErrorMessage(otpError, "send"));
+      setEmail(address);
+      setCode("");
+      setNotice(`We sent a sign-in code to ${address}. Use the latest email.`);
       go("code");
     });
   };
@@ -118,14 +128,11 @@ export function Account() {
     event.preventDefault();
     void run(async () => {
       const { error: verifyError } = await supabase.current!.auth.verifyOtp({
-        email: email.trim(),
+        email: email.trim().toLowerCase(),
         token: code.trim(),
         type: "email",
       });
-      if (verifyError)
-        return setError(
-          "That code didn’t work. It may have expired; send a new one.",
-        );
+      if (verifyError) return setError(authErrorMessage(verifyError, "verify"));
       setCode("");
       await refresh();
     });
@@ -237,13 +244,15 @@ export function Account() {
                 Sign in with your university email
               </h1>
               <p className={styles.lede}>
-                We’ll email you a 6-digit code. No password needed.
+                We’ll email you a sign-in code. No password needed.
               </p>
               <label className={styles.field}>
                 <span>University email (required)</span>
                 <input
                   type="email"
                   autoComplete="email"
+                  autoCapitalize="none"
+                  spellCheck={false}
                   inputMode="email"
                   required
                   value={email}
@@ -271,7 +280,7 @@ export function Account() {
                 Enter the code we sent to <b>{email.trim()}</b>.
               </p>
               <label className={styles.field}>
-                <span>6-digit code (required)</span>
+                <span>Email code (required)</span>
                 <input
                   className={styles.code}
                   inputMode="numeric"
