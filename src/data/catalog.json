@@ -1,0 +1,209 @@
+{
+  "mode": "demo",
+  "campus": {
+    "id": "00000000-0000-4000-8000-000000000001",
+    "name": "Demo Campus",
+    "isDemo": true
+  },
+  "categories": [
+    {
+      "id": "clothing",
+      "name": "Clothing"
+    },
+    {
+      "id": "food",
+      "name": "Food"
+    },
+    {
+      "id": "healthcare",
+      "name": "Healthcare Resources"
+    },
+    {
+      "id": "household",
+      "name": "Household Essentials"
+    },
+    {
+      "id": "housing",
+      "name": "Housing Resources"
+    },
+    {
+      "id": "other",
+      "name": "Other"
+    },
+    {
+      "id": "supplies",
+      "name": "School Supplies"
+    },
+    {
+      "id": "shoes",
+      "name": "Shoes"
+    },
+    {
+      "id": "transportation",
+      "name": "Transportation / Carpooling"
+    }
+  ],
+  "locations": [
+    {
+      "id": "00000000-0000-4000-8000-000000000011",
+      "name": "Campus Mail Center",
+      "building": "Welcome building · Room 104",
+      "hours": "Mon–Fri, 10 am–4 pm",
+      "instructions": "For this fictional demo, visit the pickup counter and show your reservation confirmation."
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000012",
+      "name": "Student Support Hub",
+      "building": "West hall · Ground floor",
+      "hours": "Mon–Thu, 10 am–6 pm",
+      "instructions": "For this fictional demo, check in with a volunteer at the welcome desk."
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000010",
+      "name": "Student Union",
+      "building": "Community desk · Ground floor",
+      "hours": "Mon–Fri, 9 am–5 pm",
+      "instructions": "For this fictional demo, collect items at the community desk. Bring your reservation confirmation."
+    }
+  ],
+  "resources": [
+    {
+      "id": "00000000-0000-4000-8000-000000000100",
+      "title": "A little pantry pick-me-up",
+      "description": "A few sealed pantry staples for the week: pasta, beans, and a jar of tomato sauce. Fictional sample donation; package illustrations are not donor photographs.",
+      "categoryId": "food",
+      "kind": "OFFER",
+      "locationId": "00000000-0000-4000-8000-000000000010",
+      "status": "AVAILABLE",
+      "available": 5,
+      "quantity": 6,
+      "image": "/illustrations/pantry.svg",
+      "imageDescription": "Illustration of a fictional sample resource",
+      "createdAt": "2026-11-07T17:30:00.000Z",
+      "food": {
+        "name": "A little pantry pick-me-up",
+        "dateLabel": "Best before",
+        "bestBy": "2027-04-01",
+        "opened": false,
+        "shelfStable": true,
+        "storage": "Store sealed in a cool, dry place. Demo information only.",
+        "allergens": [],
+        "allergensKnown": false
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000101",
+      "title": "Notebooks for your next big idea",
+      "description": "Unused lined notebooks, ready for lecture notes, sketches, or a fresh start. This is a fictional sample listing.",
+      "categoryId": "supplies",
+      "kind": "OFFER",
+      "locationId": "00000000-0000-4000-8000-000000000011",
+      "status": "AVAILABLE",
+      "available": 4,
+      "quantity": 4,
+      "image": "/illustrations/notebooks.svg",
+      "imageDescription": "Illustration of a fictional sample resource",
+      "createdAt": "2026-11-07T17:00:00.000Z",
+      "food": null
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000102",
+      "title": "An extra layer for cooler days",
+      "description": "A clean, gently worn jacket in size medium. This fictional donation has been offered but has not been received at a pickup location.",
+      "categoryId": "clothing",
+      "kind": "OFFER",
+      "locationId": "00000000-0000-4000-8000-000000000012",
+      "status": "PENDING",
+      "available": 0,
+      "quantity": 1,
+      "image": "/illustrations/jacket.svg",
+      "imageDescription": "Illustration of a fictional sample resource",
+      "createdAt": "2026-11-07T16:30:00.000Z",
+      "food": null
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000103",
+      "title": "Looking for a desk lamp",
+      "description": "A student is looking for a working desk lamp for evening study sessions. This is a fictional request, not available inventory.",
+      "categoryId": "household",
+      "kind": "REQUEST",
+      "locationId": "00000000-0000-4000-8000-000000000010",
+      "status": "REQUEST",
+      "available": 0,
+      "quantity": 1,
+      "image": "/illustrations/lamp.svg",
+      "imageDescription": "Illustration of a fictional sample resource",
+      "createdAt": "2026-11-07T16:00:00.000Z",
+      "food": null
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000104",
+      "title": "Oats for an easy morning",
+      "description": "Unopened bags of rolled oats for breakfasts before class. Fictional sample donation with an illustrative image; check real package labels before use.",
+      "categoryId": "food",
+      "kind": "OFFER",
+      "locationId": "00000000-0000-4000-8000-000000000010",
+      "status": "AVAILABLE",
+      "available": 3,
+      "quantity": 3,
+      "image": "/illustrations/oats.svg",
+      "imageDescription": "Illustration of a fictional sample resource",
+      "createdAt": "2026-11-07T15:30:00.000Z",
+      "food": {
+        "name": "Oats for an easy morning",
+        "dateLabel": "Best before",
+        "bestBy": "2027-04-01",
+        "opened": false,
+        "shelfStable": true,
+        "storage": "Store sealed in a cool, dry place. Demo information only.",
+        "allergens": [],
+        "allergensKnown": false
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000105",
+      "title": "A mug for your study break",
+      "description": "A clean ceramic mug with room for your favorite warm drink. This is a fictional sample listing.",
+      "categoryId": "household",
+      "kind": "OFFER",
+      "locationId": "00000000-0000-4000-8000-000000000011",
+      "status": "AVAILABLE",
+      "available": 2,
+      "quantity": 2,
+      "image": "/illustrations/mug.svg",
+      "imageDescription": "Illustration of a fictional sample resource",
+      "createdAt": "2026-11-07T15:00:00.000Z",
+      "food": null
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000106",
+      "title": "Could use a pair of walking shoes",
+      "description": "A fictional student request for comfortable walking shoes, size 8. Respond privately when the exchange service launches.",
+      "categoryId": "shoes",
+      "kind": "REQUEST",
+      "locationId": "00000000-0000-4000-8000-000000000012",
+      "status": "REQUEST",
+      "available": 0,
+      "quantity": 1,
+      "image": "/illustrations/shoes.svg",
+      "imageDescription": "Illustration of a fictional sample resource",
+      "createdAt": "2026-11-07T14:30:00.000Z",
+      "food": null
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000107",
+      "title": "Scientific calculator",
+      "description": "A working calculator for the next problem set. Its only unit is already reserved in this fictional demo.",
+      "categoryId": "supplies",
+      "kind": "OFFER",
+      "locationId": "00000000-0000-4000-8000-000000000012",
+      "status": "RESERVED",
+      "available": 0,
+      "quantity": 1,
+      "image": "/illustrations/calculator.svg",
+      "imageDescription": "Illustration of a fictional sample resource",
+      "createdAt": "2026-11-07T14:00:00.000Z",
+      "food": null
+    }
+  ]
+}

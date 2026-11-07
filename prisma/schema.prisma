@@ -1,0 +1,291 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MemberRole {
+  STUDENT
+  STAFF
+  ADMIN
+}
+
+enum ListingKind {
+  OFFER
+  REQUEST
+}
+
+enum ListingStatus {
+  OPEN
+  FULFILLED
+  CLOSED
+  REMOVED
+}
+
+enum StockStatus {
+  PLEDGED
+  RECEIVED
+  REMOVED
+}
+
+enum ReservationStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  EXPIRED
+}
+
+enum InventoryEventKind {
+  RECEIPT
+  RESERVE
+  CANCEL
+  EXPIRE
+  PICKUP
+  CORRECTION
+  REMOVE
+}
+
+model Campus {
+  id           String       @id @default(uuid()) @db.Uuid
+  slug         String       @unique
+  name         String
+  emailDomains String[]
+  isDemo       Boolean      @default(false)
+  memberships  Membership[]
+  locations    Location[]
+  createdAt    DateTime     @default(now()) @db.Timestamptz(3)
+}
+
+model User {
+  id          String       @id @default(uuid()) @db.Uuid
+  authSubject String?      @unique @db.Uuid
+  email       String       @unique
+  displayName String
+  memberships Membership[]
+  createdAt   DateTime     @default(now()) @db.Timestamptz(3)
+}
+
+model Membership {
+  id            String                    @id @default(uuid()) @db.Uuid
+  campusId      String                    @db.Uuid
+  userId        String                    @db.Uuid
+  role          MemberRole                @default(STUDENT)
+  verifiedAt    DateTime?                 @db.Timestamptz(3)
+  campus        Campus                    @relation(fields: [campusId], references: [id])
+  user          User                      @relation(fields: [userId], references: [id])
+  assignments   StaffAssignment[]
+  listings      Listing[]
+  reservations  Reservation[]
+  events        InventoryEvent[]
+  conversations ConversationParticipant[]
+  reports       Report[]
+
+  @@unique([userId, campusId])
+  @@unique([id, campusId])
+}
+
+model Location {
+  id           String            @id @default(uuid()) @db.Uuid
+  campusId     String            @db.Uuid
+  name         String
+  building     String
+  hours        String
+  instructions String
+  active       Boolean           @default(true)
+  campus       Campus            @relation(fields: [campusId], references: [id])
+  assignments  StaffAssignment[]
+  listings     Listing[]
+  stock        StockLot[]
+
+  @@unique([id, campusId])
+}
+
+model StaffAssignment {
+  id           String     @id @default(uuid()) @db.Uuid
+  campusId     String     @db.Uuid
+  membershipId String     @db.Uuid
+  locationId   String     @db.Uuid
+  membership   Membership @relation(fields: [membershipId, campusId], references: [id, campusId])
+  location     Location   @relation(fields: [locationId, campusId], references: [id, campusId])
+
+  @@unique([membershipId, locationId])
+}
+
+model Category {
+  id       String    @id
+  name     String    @unique
+  listings Listing[]
+}
+
+model Listing {
+  id            String         @id @default(uuid()) @db.Uuid
+  campusId      String         @db.Uuid
+  authorId      String         @db.Uuid
+  categoryId    String
+  locationId    String         @db.Uuid
+  title         String
+  description   String
+  kind          ListingKind
+  status        ListingStatus  @default(OPEN)
+  quantity      Int?
+  images        String[]
+  isDemo        Boolean        @default(false)
+  createdAt     DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime       @updatedAt @db.Timestamptz(3)
+  author        Membership     @relation(fields: [authorId, campusId], references: [id, campusId])
+  category      Category       @relation(fields: [categoryId], references: [id])
+  location      Location       @relation(fields: [locationId, campusId], references: [id, campusId])
+  food          FoodDetails?
+  stock         StockLot[]
+  conversations Conversation[]
+  reports       Report[]
+
+  @@unique([id, campusId])
+  @@index([campusId, kind, status, createdAt])
+  @@index([categoryId, campusId])
+}
+
+model FoodDetails {
+  listingId      String   @id @db.Uuid
+  foodName       String
+  dateLabel      String
+  bestBy         DateTime @db.Date
+  opened         Boolean  @default(false)
+  shelfStable    Boolean  @default(true)
+  storage        String
+  allergens      String[]
+  allergensKnown Boolean  @default(false)
+  listing        Listing  @relation(fields: [listingId], references: [id])
+}
+
+model StockLot {
+  id           String            @id @default(uuid()) @db.Uuid
+  campusId     String            @db.Uuid
+  listingId    String            @db.Uuid
+  locationId   String            @db.Uuid
+  status       StockStatus       @default(PLEDGED)
+  pledged      Int
+  onHand       Int               @default(0)
+  reserved     Int               @default(0)
+  receivedAt   DateTime?         @db.Timestamptz(3)
+  listing      Listing           @relation(fields: [listingId, campusId], references: [id, campusId])
+  location     Location          @relation(fields: [locationId, campusId], references: [id, campusId])
+  reservations Reservation[]
+  events       InventoryEvent[]
+  food         StockFoodDetails?
+
+  @@unique([id, campusId])
+  @@index([campusId, locationId, status])
+}
+
+model Reservation {
+  id             String            @id @default(uuid()) @db.Uuid
+  campusId       String            @db.Uuid
+  stockLotId     String            @db.Uuid
+  memberId       String            @db.Uuid
+  quantity       Int
+  status         ReservationStatus @default(ACTIVE)
+  expiresAt      DateTime          @db.Timestamptz(3)
+  createdAt      DateTime          @default(now()) @db.Timestamptz(3)
+  completedAt    DateTime?         @db.Timestamptz(3)
+  cancelledAt    DateTime?         @db.Timestamptz(3)
+  expiredAt      DateTime?         @db.Timestamptz(3)
+  idempotencyKey String
+  stockLot       StockLot          @relation(fields: [stockLotId, campusId], references: [id, campusId])
+  member         Membership        @relation(fields: [memberId, campusId], references: [id, campusId])
+
+  events InventoryEvent[]
+
+  @@unique([memberId, idempotencyKey])
+  @@unique([id, stockLotId, campusId])
+  @@index([status, expiresAt])
+  @@index([memberId, createdAt])
+}
+
+model InventoryEvent {
+  id             String             @id @default(uuid()) @db.Uuid
+  campusId       String             @db.Uuid
+  stockLotId     String             @db.Uuid
+  actorId        String             @db.Uuid
+  kind           InventoryEventKind
+  onHandDelta    Int
+  reservedDelta  Int
+  reason         String
+  commandKey     String
+  requestHash    String?
+  reservationId  String?            @db.Uuid
+  onHandBefore   Int?
+  onHandAfter    Int?
+  reservedBefore Int?
+  reservedAfter  Int?
+  createdAt      DateTime           @default(now()) @db.Timestamptz(3)
+  stockLot       StockLot           @relation(fields: [stockLotId, campusId], references: [id, campusId])
+  actor          Membership         @relation(fields: [actorId, campusId], references: [id, campusId])
+  reservation    Reservation?       @relation(fields: [reservationId, stockLotId, campusId], references: [id, stockLotId, campusId])
+
+  @@unique([actorId, commandKey])
+  @@index([stockLotId, createdAt])
+}
+
+model Conversation {
+  id           String                    @id @default(uuid()) @db.Uuid
+  campusId     String                    @db.Uuid
+  listingId    String                    @db.Uuid
+  createdAt    DateTime                  @default(now()) @db.Timestamptz(3)
+  listing      Listing                   @relation(fields: [listingId, campusId], references: [id, campusId])
+  participants ConversationParticipant[]
+
+  @@unique([id, campusId])
+}
+
+model ConversationParticipant {
+  conversationId String       @db.Uuid
+  memberId       String       @db.Uuid
+  campusId       String       @db.Uuid
+  conversation   Conversation @relation(fields: [conversationId, campusId], references: [id, campusId])
+  member         Membership   @relation(fields: [memberId, campusId], references: [id, campusId])
+  messages       Message[]
+
+  @@id([conversationId, memberId])
+}
+
+model Message {
+  id             String                  @id @default(uuid()) @db.Uuid
+  conversationId String                  @db.Uuid
+  senderId       String                  @db.Uuid
+  body           String
+  createdAt      DateTime                @default(now()) @db.Timestamptz(3)
+  sender         ConversationParticipant @relation(fields: [conversationId, senderId], references: [conversationId, memberId])
+
+  @@index([conversationId, createdAt])
+}
+
+model Report {
+  id         String     @id @default(uuid()) @db.Uuid
+  campusId   String     @db.Uuid
+  reporterId String     @db.Uuid
+  listingId  String     @db.Uuid
+  reason     String
+  resolvedAt DateTime?  @db.Timestamptz(3)
+  createdAt  DateTime   @default(now()) @db.Timestamptz(3)
+  reporter   Membership @relation(fields: [reporterId, campusId], references: [id, campusId])
+  listing    Listing    @relation(fields: [listingId, campusId], references: [id, campusId])
+}
+
+// Snapshot of a particular donated batch; listing metadata is only a draft.
+model StockFoodDetails {
+  stockLotId     String   @id @db.Uuid
+  foodName       String
+  photo          String
+  dateLabel      String
+  bestBy         DateTime @db.Date
+  opened         Boolean  @default(false)
+  shelfStable    Boolean  @default(true)
+  storage        String
+  allergens      String[]
+  allergensKnown Boolean  @default(false)
+  stockLot       StockLot @relation(fields: [stockLotId], references: [id])
+}
