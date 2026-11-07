@@ -115,7 +115,7 @@ export function ResourceFinder({ resources }: { resources: CampusResource[] }) {
             W<span>+</span>
           </span>
           <span>
-            Basic Needs Finder<small>WESTERN · BELLINGHAM</small>
+            Viking Table<small>WESTERN · BELLINGHAM</small>
           </span>
         </a>
         <nav aria-label="Main navigation">
@@ -385,7 +385,7 @@ export function ResourceFinder({ resources }: { resources: CampusResource[] }) {
           <p className="directory-footer">
             Sources checked {checkedLabel}.{" "}
             <a
-              href="https://github.com/OwenPawl/Basic-Needs-Finder/issues/new?title=Resource%20information%20correction"
+              href="https://github.com/OwenPawl/Viking-Table/issues/new?title=Resource%20information%20correction"
               target="_blank"
               rel="noreferrer"
             >
@@ -505,7 +505,7 @@ export function ResourceFinder({ resources }: { resources: CampusResource[] }) {
           </div>
           <div>
             <p>
-              Basic Needs Finder brings together public information from WWU and
+              Viking Table brings together public information from WWU and
               local providers. It complements the university’s Basic Needs Hub
               and starts with food access.
             </p>
@@ -528,11 +528,11 @@ export function ResourceFinder({ resources }: { resources: CampusResource[] }) {
       </main>
       <footer>
         <a className="brand" href="#">
-          Basic Needs Finder
+          Viking Table
           <span className="footer-location">WWU · Bellingham, WA</span>
         </a>
         <span>Support belongs within reach.</span>
-        <External href="https://github.com/OwenPawl/Basic-Needs-Finder">
+        <External href="https://github.com/OwenPawl/Viking-Table">
           Project & sources
         </External>
       </footer>

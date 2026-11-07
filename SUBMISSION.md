@@ -4,7 +4,7 @@
 
 ## 1. Name (<128 characters)
 
-*Draft:* Basic Needs Finder: free food and essentials for WWU students, shared through safe campus pickup points
+*Draft:* Viking Table: free food and essentials for WWU students, shared through safe campus pickup points
 
 ## 2. Description & How the idea intentionally addresses barriers faced by marginalized communities. (1500 < characters)
 
@@ -26,7 +26,7 @@ We also provided recourses for students to apply for snap benefits.
 
 ## 5. What makes your idea unique? Who else is in this space? How is your idea different? (1200 < characters)
 
-*Draft:* Students already have campus pantries, the Bellingham Food Bank, Washington 211, Buy Nothing groups, and resale apps. Each solves part of the problem, and the information is scattered. Basic Needs Finder puts both halves in one place. First, a food directory of real WWU and Bellingham resources, each with hours, access rules, and a link to its official source plus the date it was last checked, so students aren't sent to a closed pantry. Second, a free goods exchange with the reliability of a pantry: an item only shows as available after staff confirm it was physically dropped off, students reserve it and collect it at a campus desk, and the database guarantees two people can never claim the same last item. Messages stay inside the app, so no one has to publish a phone number, and food must be sealed, shelf-stable, and in date to be accepted.
+*Draft:* Students already have campus pantries, the Bellingham Food Bank, Washington 211, Buy Nothing groups, and resale apps. Each solves part of the problem, and the information is scattered. Viking Table puts both halves in one place. First, a food directory of real WWU and Bellingham resources, each with hours, access rules, and a link to its official source plus the date it was last checked, so students aren't sent to a closed pantry. Second, a free goods exchange with the reliability of a pantry: an item only shows as available after staff confirm it was physically dropped off, students reserve it and collect it at a campus desk, and the database guarantees two people can never claim the same last item. Messages stay inside the app, so no one has to publish a phone number, and food must be sealed, shelf-stable, and in date to be accepted.
 
 ## 6. Visual assets (diagrams and anything that illustrates the idea)
 
@@ -51,7 +51,7 @@ flowchart LR
     C -->|Staff removes unsafe item| F[Removed]
 ```
 
-Live directory: https://owenpawl.github.io/Basic-Needs-Finder/ . Add screenshots of the directory and exchange screens before submitting.
+Live directory: https://owenpawl.github.io/Viking-Table/ . Add screenshots of the directory and exchange screens before submitting.
 
 ## 7. Who may want to sponsor this project
 

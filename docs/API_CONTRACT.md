@@ -40,6 +40,6 @@ Success envelope: `{ data, request_id }`. Error envelope: `{ error: { code, mess
 
 ## Static routing and ownership
 
-Next.js exports to `out/` with base path `/Basic-Needs-Finder`. Use static paths and query parameters for live listing identifiers; do not depend on runtime Next.js API routes, server actions, middleware, or dynamic rendering on Pages. Prefix local assets using `assetPath` and use Next links for internal navigation.
+Next.js exports to `out/` with base path `/Viking-Table`. Use static paths and query parameters for live listing identifiers; do not depend on runtime Next.js API routes, server actions, middleware, or dynamic rendering on Pages. Prefix local assets using `assetPath` and use Next links for internal navigation.
 
 Foundation owns schema/configuration and the demo shell. UI foundation owns screen/fixture specifications. Auth owns membership/session/RLS; inventory-core owns transaction/RPC implementations and database race tests. Listing, reservation, messaging, and staff tasks consume these contracts. Coordinate schema changes in the mesh before editing shared migrations; append new migrations once one has been published.

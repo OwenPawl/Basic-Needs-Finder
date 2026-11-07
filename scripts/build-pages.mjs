@@ -2,7 +2,7 @@ import { spawnSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 
 const repository =
-  process.env.GITHUB_REPOSITORY?.split("/")[1] ?? "Basic-Needs-Finder";
+  process.env.GITHUB_REPOSITORY?.split("/")[1] ?? "Viking-Table";
 const result = spawnSync(
   process.execPath,
   ["node_modules/next/dist/bin/next", "build"],

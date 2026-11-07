@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Basic Needs Finder · WWU & Bellingham",
+  title: "Viking Table · WWU & Bellingham",
   description:
     "Find food pantries, grocery support, SNAP application help, and emergency food resources for Western Washington University students.",
   robots: { index: false, follow: false },

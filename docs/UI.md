@@ -54,7 +54,7 @@ Rules:
 - The first focusable element is a "Skip to main content" link. Each page has one `<h1>` and landmarks for `header`, `nav`, `main`, and `footer`.
 - Visible focus ring: 2 px outline with 2 px offset, at least 3:1 contrast against the background, and never removed.
 - Dialogs use `<dialog>` with `showModal()`. Focus goes to the dialog heading or its first field. `Escape` closes it, and focus returns to the control that opened it (already implemented for catalog details).
-- After a route change, focus moves to the new page's `<h1>`, and the document title updates to "{Page} · Basic Needs Finder".
+- After a route change, focus moves to the new page's `<h1>`, and the document title updates to "{Page} · Viking Table".
 - Dismissing a toast never moves focus. A toast is not the only place an outcome appears: the result also shows inline on the page.
 
 ### 1.4 Forms
@@ -98,7 +98,7 @@ Live regions: use one polite region (`role="status"`) per page for results count
 
 ## 2. Student screens
 
-Routes are static export paths under the base path `/Basic-Needs-Finder`. Object identifiers use query parameters (section 6).
+Routes are static export paths under the base path `/Viking-Table`. Object identifiers use query parameters (section 6).
 
 ### S1. Browse and search (`/`)
 

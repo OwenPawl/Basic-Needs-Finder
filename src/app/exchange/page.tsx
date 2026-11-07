@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { GoodsExchange } from "@/components/goods-exchange";
-export const metadata = { title: "Give & find goods · Basic Needs Finder" };
+export const metadata = { title: "Give & find goods · Viking Table" };
 export default function ExchangePage() {
   return (
     <Suspense

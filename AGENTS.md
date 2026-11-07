@@ -1,4 +1,4 @@
-# Working on Basic Needs Finder
+# Working on Viking Table
 
 Read README.md, docs/MVP.md, docs/DOMAIN.md, and the current task packet before implementation. docs/PROJECT_PLAN.txt preserves the user's original plan.
 
