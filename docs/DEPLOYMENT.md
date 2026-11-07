@@ -1,6 +1,6 @@
 # GitHub Pages + Supabase Free
 
-The frontend is a static Next.js export. The backend target is Supabase Free; it is not connected in the foundation preview. No paid service is required by this configuration.
+The frontend is a static Next.js export. The backend target is Supabase Free; it is not connected to the public directory. No paid service is required by this configuration.
 
 ## GitHub Pages
 
@@ -9,7 +9,7 @@ The frontend is a static Next.js export. The backend target is Supabase Free; it
 3. The `github-pages` environment should allow deployments from main. Task branches cannot overwrite the published site.
 4. Successful deployment URL: `https://owenpawl.github.io/Basic-Needs-Finder/`. Check the workflow's deployment result before describing the site as live.
 
-The workflow uses only its built-in short-lived GitHub token. It does not receive a production database URL or service key. CI uses disposable PostgreSQL and fictional seed data. Build output contains the committed demo catalog only.
+The workflow uses only its built-in short-lived GitHub token. It does not receive a production database URL or service key. CI uses disposable PostgreSQL and fictional seed data. Build output contains the curated public resource directory. Fictional database/catalog fixtures are not imported by the public page. The directory needs no backend keys.
 
 Reference: [GitHub Pages custom workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 

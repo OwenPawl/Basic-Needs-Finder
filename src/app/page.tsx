@@ -1,7 +1,6 @@
-import { CampusBrowser } from "@/components/campus-browser";
-import catalogData from "@/data/catalog.json";
-import { catalogSchema } from "@/lib/catalog";
-
+import { ResourceFinder } from "@/components/resource-finder";
+import resources from "@/data/wwu-resources.json";
+import { resourceSchema } from "@/lib/resources";
 export default function Home() {
-  return <CampusBrowser catalog={catalogSchema.parse(catalogData)} />;
+  return <ResourceFinder resources={resourceSchema.array().parse(resources)} />;
 }
