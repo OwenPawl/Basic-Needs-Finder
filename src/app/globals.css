@@ -152,21 +152,8 @@ button {
 .brand-mark {
   width: 43px;
   height: 43px;
-  display: grid;
-  place-content: center;
-  background: var(--navy);
-  color: white;
-  position: relative;
-  font-size: 27px;
-  font-weight: 900;
-  border-radius: 5px;
-}
-.brand-mark span {
-  position: absolute;
-  right: 3px;
-  top: 0;
-  color: #9ed7f3;
-  font-size: 16px;
+  display: block;
+  flex-shrink: 0;
 }
 .site-header nav {
   display: flex;
@@ -1011,9 +998,8 @@ footer > a:last-child {
     letter-spacing: 1.5px;
   }
   .brand-mark {
-    width: 35px;
-    height: 37px;
-    font-size: 23px;
+    width: 36px;
+    height: 36px;
   }
   .plan-link {
     font-size: 11px;
@@ -1164,9 +1150,6 @@ footer > a:last-child {
 @media (max-width: 360px) {
   h1 {
     font-size: 42px;
-  }
-  .site-header .brand-mark {
-    display: none;
   }
   .trust-strip {
     font-size: 9px;
