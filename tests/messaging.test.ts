@@ -239,3 +239,21 @@ test("unauthenticated and anonymous callers are rejected", async () => {
     );
   });
 });
+
+test("rapid messages keep their order", async () => {
+  await transaction(async (db) => {
+    const author = await student(db, "Rowan");
+    const asker = await student(db, "Sam");
+    const listing = await listingBy(db, author.member);
+    await as(db, asker.subject);
+    const { conversation_id } = await rpc(db, "start_conversation", [listing]);
+    const bodies = Array.from({ length: 12 }, (_, i) => `message ${i + 1}`);
+    for (const body of bodies)
+      await rpc(db, "send_message", [conversation_id, body]);
+    const thread = await rpc(db, "conversation_messages", [conversation_id]);
+    assert.deepEqual(
+      thread.messages.map((m: { body: string }) => m.body),
+      bodies,
+    );
+  });
+});

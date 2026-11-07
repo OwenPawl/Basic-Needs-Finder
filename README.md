@@ -6,7 +6,7 @@ Food and basic-needs support for Western Washington University students, on camp
 
 **Current status:** an anonymous public directory with 11 real WWU/Bellingham resources, search, location/type/service-day filters, provider details, directions, and a printable/downloadable resource plan. Each resource links to an official source with a checked date. No AI imagery, fabricated public inventory, student-data collection, location request, or analytics. Plan selections live in page memory and clear on reload.
 
-The goods exchange at `/exchange/` implements offers, requests, owner edits, real photo uploads, and category/location/availability search. Offers remain pledged until staff confirms receipt. `/account/` implements verified campus sign-in. Reservations, staff receipt/pickup/correction/report views, and private listing conversations are implemented. The initial six migrations are installed in the hosted project; final API installation and email delivery are still pending. Full signed-in HTTP/browser verification is not yet complete. The PostgreSQL foundation and fictional test fixtures remain available for their implementation; those fixtures are not imported into the public directory.
+The goods exchange at `/exchange/` implements offers, requests, owner edits, real photo uploads, and category/location/availability search. Offers remain pledged until staff confirms receipt. `/account/` implements verified campus sign-in. Reservations, staff receipt/pickup/correction/report views, and private listing conversations are implemented. Production migrations 0001–0010 are installed in the hosted project. Custom SMTP and code templates are configured; sender verification and actual email delivery are still pending. Full signed-in HTTP/browser verification is not yet complete. Fictional fixtures are used only for local database tests and are not imported into the public directory or hosted inventory.
 
 ## Run the preview
 
@@ -57,6 +57,7 @@ Database tests need a dedicated database whose name ends in `_test`. For the loc
 podman exec basic-needs-finder-postgres createdb -U campus basic_needs_test
 export DATABASE_URL='postgresql://campus:campus_local_only@127.0.0.1:55432/basic_needs_test?schema=public'
 npm run db:test-auth-shim
+BNF_ALLOW_TEST_SHIMS=1 npm run db:test-storage
 npm run db:migrate
 npm run db:seed
 npm run test:db
