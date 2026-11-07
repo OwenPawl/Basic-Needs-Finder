@@ -1,7 +1,7 @@
 name: Verify and publish Pages
 on:
   push:
-    branches: [main, codex/app-foundation]
+    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -40,6 +40,7 @@ jobs:
       - run: npm run db:migrate
       - run: npm run db:seed
       - run: npm run typecheck
+      - run: python3 docs/tools/check_inventory_vectors.py docs/inventory-test-vectors.json
       - run: npm test
       - run: npm run test:db
       - run: npm run build:pages
@@ -49,7 +50,7 @@ jobs:
           path: out
 
   deploy:
-    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/codex/app-foundation')
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: verify
     runs-on: ubuntu-latest
     permissions:
