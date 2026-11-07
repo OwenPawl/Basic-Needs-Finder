@@ -75,9 +75,23 @@ export function ExchangeOperations({ staff = false }: { staff?: boolean }) {
   const running = useRef(false);
   const reload = useCallback(async () => {
     try {
+      const client = getSupabaseClient();
+      if (!client) throw new Error("Exchange setup is still in progress.");
+      const { data: auth, error: sessionError } = await client.auth.getSession();
+      if (sessionError)
+        throw new Error("We couldn't check your sign-in. Please try again.");
+      if (!auth.session) {
+        setCatalog(null);
+        setReservations([]);
+        setStock(null);
+        setListing(null);
+        setPhotos(new Map());
+        throw new Error(
+          "Sign in with your WWU email to view your reservations and pickups.",
+        );
+      }
       const cat = await loadExchangeCatalog();
       setCatalog(cat);
-      const client = getSupabaseClient()!;
       if (staff) {
         const r = await client.rpc("exchange_staff_inventory", {
           campus_id: cat.campus.id,
