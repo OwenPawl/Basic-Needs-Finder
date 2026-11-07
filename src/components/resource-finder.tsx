@@ -385,7 +385,7 @@ export function ResourceFinder({ resources }: { resources: CampusResource[] }) {
           <p className="directory-footer">
             Sources checked {checkedLabel}.{" "}
             <a
-              href="https://github.com/OwenPawl/Viking-Table/issues/new?title=Resource%20information%20correction"
+              href="https://github.com/OwenPawl/Basic-Needs-Finder/issues/new?title=Resource%20information%20correction"
               target="_blank"
               rel="noreferrer"
             >
@@ -532,7 +532,7 @@ export function ResourceFinder({ resources }: { resources: CampusResource[] }) {
           <span className="footer-location">WWU · Bellingham, WA</span>
         </a>
         <span>Support belongs within reach.</span>
-        <External href="https://github.com/OwenPawl/Viking-Table">
+        <External href="https://github.com/OwenPawl/Basic-Needs-Finder">
           Project & sources
         </External>
       </footer>

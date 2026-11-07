@@ -2,7 +2,7 @@
 
 Food and basic-needs support for Western Washington University students, on campus and around Bellingham.
 
-[Open the resource finder](https://owenpawl.github.io/Viking-Table/).
+[Open the resource finder](https://owenpawl.github.io/Basic-Needs-Finder/).
 
 **Current status:** an anonymous public directory with 11 real WWU/Bellingham resources, search, location/type/service-day filters, provider details, directions, and a printable/downloadable resource plan. Each resource links to an official source with a checked date. No AI imagery, fabricated public inventory, student-data collection, location request, or analytics. Plan selections live in page memory and clear on reload.
 
@@ -25,7 +25,7 @@ npm run build:pages
 npm run preview
 ```
 
-Open http://127.0.0.1:3000/Viking-Table/. The Pages base path is handled by the build script. The site contains no runtime Next.js server routes.
+Open http://127.0.0.1:3000/Basic-Needs-Finder/. The Pages base path is handled by the build script. The site contains no runtime Next.js server routes.
 
 ## Local PostgreSQL
 

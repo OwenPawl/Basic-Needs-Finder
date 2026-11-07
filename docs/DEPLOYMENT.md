@@ -7,7 +7,7 @@ The frontend is a static Next.js export. The backend target is Supabase Free; it
 1. In the repository Settings → Pages, set Source to **GitHub Actions**.
 2. The `Verify and publish Pages` workflow runs on main and PRs. PRs verify only. Pushes to main deploy after verification.
 3. The `github-pages` environment should allow deployments from main. Task branches cannot overwrite the published site.
-4. Successful deployment URL: `https://owenpawl.github.io/Viking-Table/`. Check the workflow's deployment result before describing the site as live.
+4. Successful deployment URL: `https://owenpawl.github.io/Basic-Needs-Finder/`. Check the workflow's deployment result before describing the site as live.
 
 The workflow uses only its built-in short-lived GitHub token. It does not receive a production database URL or service key. CI uses disposable PostgreSQL and fictional seed data. Build output contains the curated public resource directory. Fictional database/catalog fixtures are not imported by the public page. The directory needs no backend keys.
 

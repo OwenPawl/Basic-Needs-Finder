@@ -16,7 +16,7 @@
       "estimate_minutes": 90,
       "demo_required": true,
       "context": {
-        "repository": "https://github.com/OwenPawl/Viking-Table",
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
         "interface": "Own the application skeleton, database migrations, package configuration, and shared contracts. UI work can proceed using the fixtures documented by ui-foundation.",
         "deliverable": "Runnable starter, migration/seed commands, environment example without secrets, and agreed schema/API types."
       }
@@ -36,7 +36,7 @@
       "estimate_minutes": 60,
       "demo_required": true,
       "context": {
-        "repository": "https://github.com/OwenPawl/Viking-Table",
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
         "interface": "Produce interface/fixture specifications independently; wire functional UI in the implementation tasks after the shared contract is accepted.",
         "deliverable": "Screen/flow specifications, shared UI conventions, and example payloads for student and staff views."
       }
@@ -56,7 +56,7 @@
       "estimate_minutes": 45,
       "demo_required": true,
       "context": {
-        "repository": "https://github.com/OwenPawl/Viking-Table",
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
         "interface": "Provide test vectors and expected outcomes before implementation; inventory-core implements executable database tests from them.",
         "deliverable": "Reviewable inventory test matrix and concurrency-test specification."
       }
@@ -78,7 +78,7 @@
       "estimate_minutes": 90,
       "demo_required": true,
       "context": {
-        "repository": "https://github.com/OwenPawl/Viking-Table",
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
         "interface": "Own session/membership and server authorization helpers; other features consume these rather than inventing role checks.",
         "deliverable": "Working authentication, verification, authorization helpers, and representative access-control tests."
       }
@@ -102,7 +102,7 @@
       "estimate_minutes": 120,
       "demo_required": true,
       "context": {
-        "repository": "https://github.com/OwenPawl/Viking-Table",
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
         "interface": "Own stock/reservation service and inventory schema extensions coordinated with foundation. Export typed operations for reservation-flow and staff-console; no unauthenticated mutation routes.",
         "deliverable": "Transactional inventory service, audit records, and executable PostgreSQL concurrency/idempotency tests."
       }
@@ -126,7 +126,7 @@
       "estimate_minutes": 120,
       "demo_required": true,
       "context": {
-        "repository": "https://github.com/OwenPawl/Viking-Table",
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
         "interface": "Consume auth and inventory contracts. Coordinate private response entry with messaging; quantity shown as available comes from confirmed stock, not the listing pledge.",
         "deliverable": "Functional student listings/discovery/profile flows with persistent data and validation checks."
       }
@@ -150,7 +150,7 @@
       "estimate_minutes": 90,
       "demo_required": true,
       "context": {
-        "repository": "https://github.com/OwenPawl/Viking-Table",
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
         "interface": "Use inventory-core transactions and student-auth session helpers. UI must not maintain a separate stock counter.",
         "deliverable": "Working end-to-end student reservation/cancellation flow and integration checks."
       }
@@ -174,7 +174,7 @@
       "estimate_minutes": 120,
       "demo_required": true,
       "context": {
-        "repository": "https://github.com/OwenPawl/Viking-Table",
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
         "interface": "Consume shared authorization and inventory transactions. Do not implement a second receipt/pickup path with different rules.",
         "deliverable": "Functional staff console, moderation/reporting entry points, and scoped authorization checks."
       }
@@ -197,7 +197,7 @@
       "estimate_minutes": 90,
       "demo_required": true,
       "context": {
-        "repository": "https://github.com/OwenPawl/Viking-Table",
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
         "interface": "Use the shared session and conversation contract. Polling is acceptable for the MVP; advanced delivery notifications follow later.",
         "deliverable": "Working inbox/conversations, privacy checks, and a two-user demonstration."
       }
@@ -222,7 +222,7 @@
       "estimate_minutes": 90,
       "demo_required": true,
       "context": {
-        "repository": "https://github.com/OwenPawl/Viking-Table",
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
         "interface": "Integrate reviewed branches after coordinating owners. Publish the exact integration commit and checks; do not count the planning files as implemented features.",
         "deliverable": "Reproducible working MVP demo, setup documentation, test results, and pinned integration evidence."
       }

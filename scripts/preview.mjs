@@ -3,7 +3,7 @@ import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
 const root = path.resolve("out");
-const prefix = process.env.PREVIEW_BASE_PATH ?? "/Viking-Table";
+const prefix = process.env.PREVIEW_BASE_PATH ?? "/Basic-Needs-Finder";
 const port = Number(process.env.PORT ?? 3000);
 const mime = {
   ".html": "text/html; charset=utf-8",

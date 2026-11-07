@@ -98,7 +98,7 @@ Live regions: use one polite region (`role="status"`) per page for results count
 
 ## 2. Student screens
 
-Routes are static export paths under the base path `/Viking-Table`. Object identifiers use query parameters (section 6).
+Routes are static export paths under the base path `/Basic-Needs-Finder`. Object identifiers use query parameters (section 6).
 
 ### S1. Browse and search (`/`)
 

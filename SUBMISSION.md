@@ -51,7 +51,7 @@ flowchart LR
     C -->|Staff removes unsafe item| F[Removed]
 ```
 
-Live directory: https://owenpawl.github.io/Viking-Table/ . Add screenshots of the directory and exchange screens before submitting.
+Live directory: https://owenpawl.github.io/Basic-Needs-Finder/ . Add screenshots of the directory and exchange screens before submitting.
 
 ## 7. Who may want to sponsor this project
 
