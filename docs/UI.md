@@ -1,5 +1,7 @@
 # UI foundation: student and staff screens
 
+> Current scope update (Nov 7): the homepage is now the anonymous WWU/Bellingham resource directory described in [WWU_RESOURCES.md](WWU_RESOURCES.md). This document describes the future exchange, not public directory behavior. Fictional data below is for tests only. Use real, permitted user/provider photos when needed; no AI-generated imagery. The old `campus-browser.tsx` demo has been removed. Keep authentication and future exchange routes separate from the public finder.
+
 Task: `ui-foundation`. Branch: `codex/ui-foundation`. This is a screen, flow, and fixture specification. It does not claim any functional UI beyond the static catalog already delivered by `app-foundation`.
 
 It follows [API_CONTRACT.md](API_CONTRACT.md) (field names, error codes, static routing), [DOMAIN.md](DOMAIN.md) (inventory invariants), and [MVP.md](MVP.md) (demo script). Example payloads live in [fixtures/ui-fixtures.json](fixtures/ui-fixtures.json). All names, people, and records in this document and the fixtures are fictional.
@@ -21,7 +23,7 @@ Every status is shown with **text, an icon, and a color**. Color is never the on
 | Removed | Lot `removed`, or listing `removed`/`closed` | `Ban` | `--status-removed` (red) | No |
 | Reserved by you | The viewer holds an `active` reservation on this lot | `Bookmark` | `--status-mine` (violet) | Already held |
 
-These labels match `stateLabel` in `src/components/campus-browser.tsx`. Reuse them and don't invent synonyms.
+Use these labels consistently in future exchange screens. They originated in the retired fictional catalog preview.
 
 Reservation statuses (shown on My reservations and the staff views):
 
@@ -90,7 +92,7 @@ Every data region has all four states specified (see each screen):
 - **Loading:** skeleton blocks that match the final layout, with `aria-busy="true"` on the region. A text status "Loading listings…" goes in a polite live region. There are no spinner-only states.
 - **Empty:** a one-sentence explanation plus the next useful action, such as "Clear filters" or "Offer an item".
 - **Error:** an inline message from the error map in section 5, with a "Try again" button. Partial data that already loaded stays visible.
-- **Unavailable backend:** if live configuration is missing, show "Live accounts aren't connected in this preview" and keep the demo catalog. Never silently send real actions into demo data (see `DEPLOYMENT.md`).
+- **Unavailable backend:** if live configuration is missing, show "Live accounts aren't connected in this preview" and keep public directory browsing available. Never silently send real actions into demo data (see `DEPLOYMENT.md`).
 
 Live regions: use one polite region (`role="status"`) per page for results counts and successes, and `role="alert"` only for blocking errors. Announce availability changes after a mutation, e.g. "Reserved 1. 1 still available."
 
@@ -102,7 +104,7 @@ Routes are static export paths under the base path `/Basic-Needs-Finder`. Object
 
 - Search field (label "Search offers and requests"), post type segmented control (All / Offers / Requests), category chips, location select, "Available now only" checkbox, sort (Newest / Most available).
 - Results announce "12 results" in the polite region after filtering. The query lives in the URL (`?q=&type=&category=&location=&available=1`) so links can be shared.
-- Card: illustration or photo with alt text, title, status badge (1.1), category, location, and created time. Offers that are ready show "N available".
+- Card: permitted real photo with alt text, or a text-only fallback, title, status badge (1.1), category, location, and created time. Offers that are ready show "N available".
 - Empty: "No listings match these filters." with a "Clear filters" button. Error: list fetch failed, with retry.
 
 ### S2. Listing detail (`/listing/?id={listing_id}`)
