@@ -19,10 +19,10 @@ export const foodSchema = z.object({
 export const listingInputSchema = z
   .object({
     kind: z.enum(["offer", "request"]),
-    title: z.string().trim().min(3).max(80),
-    description: z.string().trim().min(10).max(2000),
+    title: z.string().trim().min(3, "Use at least 3 characters for the title.").max(80, "Keep the title under 80 characters."),
+    description: z.string().trim().min(10, "Add a description with at least 10 characters.").max(2000, "Keep the description under 2,000 characters."),
     category_id: z.string().min(1),
-    location_id: z.uuid(),
+    location_id: z.uuid({error: "Choose a campus pickup desk."}),
     quantity: z.number().int().min(1).max(1000).nullable(),
     images: z.array(z.string()).max(4),
     food: foodSchema.nullable(),
