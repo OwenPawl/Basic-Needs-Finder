@@ -1,0 +1,465 @@
+{
+  "_note": "Fictional data for docs/UI.md. Not a live API response; wire DTOs follow docs/API_CONTRACT.md (snake_case, lowercase enums). IDs in the 9xx range avoid the foundation seed. Photo paths are placeholders, not real donation photos.",
+  "version": 1,
+  "campus": {
+    "id": "00000000-0000-4000-8000-000000000001",
+    "name": "Demo Campus",
+    "is_demo": true
+  },
+  "location": {
+    "id": "00000000-0000-4000-8000-000000000010",
+    "name": "Student Union",
+    "hours": "Mon–Fri, 9 am–5 pm",
+    "instructions": "For this fictional demo, collect items at the community desk. Bring your reservation confirmation."
+  },
+  "members": {
+    "student_a": {
+      "id": "00000000-0000-4000-8000-000000000901",
+      "display_name": "Rowan (demo)",
+      "role": "student",
+      "verified": true
+    },
+    "student_b": {
+      "id": "00000000-0000-4000-8000-000000000902",
+      "display_name": "Sam (demo)",
+      "role": "student",
+      "verified": true
+    },
+    "student_c": {
+      "id": "00000000-0000-4000-8000-000000000903",
+      "display_name": "Jules (demo)",
+      "role": "student",
+      "verified": true
+    },
+    "staff": {
+      "id": "00000000-0000-4000-8000-000000000904",
+      "display_name": "Morgan (demo staff)",
+      "role": "staff",
+      "staff_location_ids": [
+        "00000000-0000-4000-8000-000000000010"
+      ]
+    }
+  },
+  "hold_ttl_hours_assumed": 24,
+  "listings": {
+    "offer": {
+      "listing_id": "00000000-0000-4000-8000-000000000910",
+      "kind": "offer",
+      "status": "open",
+      "title": "Sealed pantry pair",
+      "description": "Two sealed jars of fictional peanut-free pasta sauce. Demo record.",
+      "category_id": "food",
+      "location_id": "00000000-0000-4000-8000-000000000010",
+      "author_id": "00000000-0000-4000-8000-000000000901",
+      "quantity": 2,
+      "images": [
+        "fixtures/photos/sealed-pantry-pair.jpg"
+      ],
+      "created_at": "2026-11-10T17:55:00Z",
+      "food": {
+        "photo": "fixtures/photos/sealed-pantry-pair.jpg",
+        "date_label": "best_by",
+        "best_by": "2027-05-01",
+        "package_status": "sealed",
+        "shelf_stable": true,
+        "storage": "Room temperature, dry shelf",
+        "allergens": [],
+        "allergens_known": false
+      }
+    },
+    "request": {
+      "listing_id": "00000000-0000-4000-8000-000000000911",
+      "kind": "request",
+      "status": "open",
+      "title": "Looking for a winter coat (size M)",
+      "description": "Fictional demo request. Any warm coat in medium.",
+      "category_id": "clothing",
+      "location_id": "00000000-0000-4000-8000-000000000010",
+      "author_id": "00000000-0000-4000-8000-000000000903",
+      "quantity": null,
+      "images": [],
+      "created_at": "2026-11-10T16:40:00Z"
+    }
+  },
+  "allergen_display_cases": [
+    {
+      "allergens_known": false,
+      "allergens": [],
+      "display": "Allergens: unknown. Check the package label."
+    },
+    {
+      "allergens_known": true,
+      "allergens": [],
+      "display": "Allergens: none listed on package"
+    },
+    {
+      "allergens_known": true,
+      "allergens": [
+        "peanuts",
+        "soy"
+      ],
+      "display": "Allergens: peanuts, soy"
+    }
+  ],
+  "demo_steps": [
+    {
+      "step": 1,
+      "actor": "student_a",
+      "screen": "S3 -> S2",
+      "command": null,
+      "badge": "Awaiting drop-off",
+      "lot": {
+        "lot_id": "00000000-0000-4000-8000-000000000920",
+        "listing_id": "00000000-0000-4000-8000-000000000910",
+        "location_id": "00000000-0000-4000-8000-000000000010",
+        "status": "pledged",
+        "pledged_quantity": 2,
+        "on_hand": 0,
+        "reserved": 0,
+        "available": 0
+      }
+    },
+    {
+      "step": 2,
+      "actor": "student_b",
+      "screen": "S2",
+      "command": null,
+      "badge": "Awaiting drop-off",
+      "reserve_enabled": false,
+      "lot": {
+        "lot_id": "00000000-0000-4000-8000-000000000920",
+        "listing_id": "00000000-0000-4000-8000-000000000910",
+        "location_id": "00000000-0000-4000-8000-000000000010",
+        "status": "pledged",
+        "pledged_quantity": 2,
+        "on_hand": 0,
+        "reserved": 0,
+        "available": 0
+      }
+    },
+    {
+      "step": 3,
+      "actor": "staff",
+      "screen": "T2",
+      "command": {
+        "op": "receive",
+        "lot_id": "00000000-0000-4000-8000-000000000920",
+        "qty": 2,
+        "idempotency_key": "demo-receive-1"
+      },
+      "badge": "Ready for pickup",
+      "lot": {
+        "lot_id": "00000000-0000-4000-8000-000000000920",
+        "listing_id": "00000000-0000-4000-8000-000000000910",
+        "location_id": "00000000-0000-4000-8000-000000000010",
+        "status": "received",
+        "pledged_quantity": 2,
+        "on_hand": 2,
+        "reserved": 0,
+        "available": 2
+      }
+    },
+    {
+      "step": 4,
+      "actor": "student_b",
+      "screen": "S4",
+      "command": {
+        "op": "reserve",
+        "lot_id": "00000000-0000-4000-8000-000000000920",
+        "qty": 1,
+        "idempotency_key": "demo-reserve-1"
+      },
+      "badge": "Ready for pickup",
+      "lot": {
+        "lot_id": "00000000-0000-4000-8000-000000000920",
+        "listing_id": "00000000-0000-4000-8000-000000000910",
+        "location_id": "00000000-0000-4000-8000-000000000010",
+        "status": "received",
+        "pledged_quantity": 2,
+        "on_hand": 2,
+        "reserved": 1,
+        "available": 1
+      },
+      "reservation": {
+        "reservation_id": "00000000-0000-4000-8000-000000000931",
+        "lot_id": "00000000-0000-4000-8000-000000000920",
+        "student_id": "00000000-0000-4000-8000-000000000902",
+        "qty": 1,
+        "status": "active",
+        "created_at": "2026-11-10T18:05:00Z",
+        "expires_at": "2026-11-11T18:05:00Z",
+        "completed_at": null,
+        "cancelled_at": null,
+        "expired_at": null
+      }
+    },
+    {
+      "step": 5,
+      "actor": "student_b",
+      "screen": "S5",
+      "command": {
+        "op": "cancel",
+        "reservation_id": "00000000-0000-4000-8000-000000000931",
+        "idempotency_key": "demo-cancel-1"
+      },
+      "badge": "Ready for pickup",
+      "lot": {
+        "lot_id": "00000000-0000-4000-8000-000000000920",
+        "listing_id": "00000000-0000-4000-8000-000000000910",
+        "location_id": "00000000-0000-4000-8000-000000000010",
+        "status": "received",
+        "pledged_quantity": 2,
+        "on_hand": 2,
+        "reserved": 0,
+        "available": 2
+      },
+      "reservation": {
+        "reservation_id": "00000000-0000-4000-8000-000000000931",
+        "lot_id": "00000000-0000-4000-8000-000000000920",
+        "student_id": "00000000-0000-4000-8000-000000000902",
+        "qty": 1,
+        "status": "cancelled",
+        "created_at": "2026-11-10T18:05:00Z",
+        "expires_at": "2026-11-11T18:05:00Z",
+        "completed_at": null,
+        "cancelled_at": "2026-11-10T18:09:00Z",
+        "expired_at": null
+      }
+    },
+    {
+      "step": "6a",
+      "actor": "student_b",
+      "screen": "S4",
+      "command": {
+        "op": "reserve",
+        "lot_id": "00000000-0000-4000-8000-000000000920",
+        "qty": 1,
+        "idempotency_key": "demo-reserve-2"
+      },
+      "badge": "Ready for pickup",
+      "lot": {
+        "lot_id": "00000000-0000-4000-8000-000000000920",
+        "listing_id": "00000000-0000-4000-8000-000000000910",
+        "location_id": "00000000-0000-4000-8000-000000000010",
+        "status": "received",
+        "pledged_quantity": 2,
+        "on_hand": 2,
+        "reserved": 1,
+        "available": 1
+      },
+      "reservation": {
+        "reservation_id": "00000000-0000-4000-8000-000000000932",
+        "lot_id": "00000000-0000-4000-8000-000000000920",
+        "student_id": "00000000-0000-4000-8000-000000000902",
+        "qty": 1,
+        "status": "active",
+        "created_at": "2026-11-10T18:12:00Z",
+        "expires_at": "2026-11-11T18:12:00Z",
+        "completed_at": null,
+        "cancelled_at": null,
+        "expired_at": null
+      }
+    },
+    {
+      "step": "6b",
+      "actor": "staff",
+      "screen": "T3",
+      "command": {
+        "op": "pickup",
+        "reservation_id": "00000000-0000-4000-8000-000000000932",
+        "idempotency_key": "demo-pickup-1"
+      },
+      "badge": "Ready for pickup",
+      "lot": {
+        "lot_id": "00000000-0000-4000-8000-000000000920",
+        "listing_id": "00000000-0000-4000-8000-000000000910",
+        "location_id": "00000000-0000-4000-8000-000000000010",
+        "status": "received",
+        "pledged_quantity": 2,
+        "on_hand": 1,
+        "reserved": 0,
+        "available": 1
+      },
+      "reservation": {
+        "reservation_id": "00000000-0000-4000-8000-000000000932",
+        "lot_id": "00000000-0000-4000-8000-000000000920",
+        "student_id": "00000000-0000-4000-8000-000000000902",
+        "qty": 1,
+        "status": "completed",
+        "created_at": "2026-11-10T18:12:00Z",
+        "expires_at": "2026-11-11T18:12:00Z",
+        "completed_at": "2026-11-10T18:20:00Z",
+        "cancelled_at": null,
+        "expired_at": null
+      }
+    },
+    {
+      "step": 7,
+      "actor": "student_b + student_c",
+      "screen": "S4 (two sessions)",
+      "badge": "Currently reserved",
+      "lot": {
+        "lot_id": "00000000-0000-4000-8000-000000000920",
+        "listing_id": "00000000-0000-4000-8000-000000000910",
+        "location_id": "00000000-0000-4000-8000-000000000010",
+        "status": "received",
+        "pledged_quantity": 2,
+        "on_hand": 1,
+        "reserved": 1,
+        "available": 0
+      },
+      "race": {
+        "winner": {
+          "student": "student_c",
+          "command": {
+            "op": "reserve",
+            "lot_id": "00000000-0000-4000-8000-000000000920",
+            "qty": 1,
+            "idempotency_key": "demo-race-c"
+          },
+          "response": {
+            "data": {
+              "reservation": {
+                "reservation_id": "00000000-0000-4000-8000-000000000933",
+                "lot_id": "00000000-0000-4000-8000-000000000920",
+                "student_id": "00000000-0000-4000-8000-000000000903",
+                "qty": 1,
+                "status": "active",
+                "created_at": "2026-11-10T18:25:00Z",
+                "expires_at": "2026-11-11T18:25:00Z",
+                "completed_at": null,
+                "cancelled_at": null,
+                "expired_at": null
+              },
+              "lot": {
+                "lot_id": "00000000-0000-4000-8000-000000000920",
+                "listing_id": "00000000-0000-4000-8000-000000000910",
+                "location_id": "00000000-0000-4000-8000-000000000010",
+                "status": "received",
+                "pledged_quantity": 2,
+                "on_hand": 1,
+                "reserved": 1,
+                "available": 0
+              }
+            },
+            "request_id": "req-demo-race-c"
+          }
+        },
+        "loser": {
+          "student": "student_b",
+          "command": {
+            "op": "reserve",
+            "lot_id": "00000000-0000-4000-8000-000000000920",
+            "qty": 1,
+            "idempotency_key": "demo-race-b"
+          },
+          "response": {
+            "error": {
+              "code": "INSUFFICIENT_STOCK",
+              "message": "Not enough stock available"
+            },
+            "request_id": "req-demo-race-b"
+          },
+          "ui_message": "Someone reserved the last one just before you. 0 available."
+        }
+      }
+    },
+    {
+      "step": 8,
+      "actor": "any",
+      "screen": "S1, S2, S7, T1 at 320px",
+      "badge": "Currently reserved",
+      "lot": {
+        "lot_id": "00000000-0000-4000-8000-000000000920",
+        "listing_id": "00000000-0000-4000-8000-000000000910",
+        "location_id": "00000000-0000-4000-8000-000000000010",
+        "status": "received",
+        "pledged_quantity": 2,
+        "on_hand": 1,
+        "reserved": 1,
+        "available": 0
+      }
+    }
+  ],
+  "expired_reservation_example": {
+    "reservation_id": "00000000-0000-4000-8000-000000000934",
+    "lot_id": "00000000-0000-4000-8000-000000000920",
+    "student_id": "00000000-0000-4000-8000-000000000902",
+    "qty": 1,
+    "status": "expired",
+    "created_at": "2026-11-08T15:00:00Z",
+    "expires_at": "2026-11-09T15:00:00Z",
+    "completed_at": null,
+    "cancelled_at": null,
+    "expired_at": "2026-11-09T15:00:00Z"
+  },
+  "error_examples": {
+    "validation": {
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid listing",
+        "fields": {
+          "food.package_status": "Only sealed items can be offered.",
+          "food.photo": "Add a photo of the actual package."
+        }
+      },
+      "request_id": "req-demo-val-1"
+    },
+    "would_violate": {
+      "error": {
+        "code": "WOULD_VIOLATE_RESERVATIONS",
+        "message": "on_hand below reserved"
+      },
+      "request_id": "req-demo-corr-1"
+    },
+    "expired": {
+      "error": {
+        "code": "RESERVATION_EXPIRED",
+        "message": "Reservation expired"
+      },
+      "request_id": "req-demo-pick-2"
+    }
+  },
+  "conversation": {
+    "conversation_id": "00000000-0000-4000-8000-000000000940",
+    "listing_id": "00000000-0000-4000-8000-000000000910",
+    "participants": [
+      "00000000-0000-4000-8000-000000000901",
+      "00000000-0000-4000-8000-000000000902"
+    ],
+    "messages": [
+      {
+        "sender_id": "00000000-0000-4000-8000-000000000902",
+        "body": "Hi! Is the sauce still sealed? I'd like to reserve one.",
+        "created_at": "2026-11-10T18:02:00Z"
+      },
+      {
+        "sender_id": "00000000-0000-4000-8000-000000000901",
+        "body": "Yes, both jars are sealed and at the Student Union desk.",
+        "created_at": "2026-11-10T18:04:00Z"
+      }
+    ]
+  },
+  "report": {
+    "report_id": "00000000-0000-4000-8000-000000000950",
+    "listing_id": "00000000-0000-4000-8000-000000000911",
+    "reporter_id": "00000000-0000-4000-8000-000000000902",
+    "reason": "Duplicate post",
+    "created_at": "2026-11-10T18:30:00Z",
+    "resolved_at": null
+  },
+  "staff_summary": {
+    "location_id": "00000000-0000-4000-8000-000000000010",
+    "awaiting_dropoff": 0,
+    "ready_units": 0,
+    "reserved_units": 1,
+    "pickups_today": 1,
+    "open_reports": 1,
+    "counts": {
+      "received_units": 2,
+      "pickups": 1,
+      "cancellations": 1,
+      "expiries": 0
+    }
+  }
+}

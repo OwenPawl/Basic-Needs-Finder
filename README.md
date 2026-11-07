@@ -1,12 +1,16 @@
 # Basic Needs Finder
 
-A campus resource-sharing platform for free essentials, designated pickup points, and community support.
+Food and basic-needs support for Western Washington University students, on campus and around Bellingham.
 
-**Current status:** runnable application foundation with an interactive, clearly labeled fictional catalog. Search, categories, pickup-location filters, offers/requests, availability, item details, and food information work in the preview. PostgreSQL schema, migrations, fictional seed data, and constraint tests are included. Live accounts, messaging, reservations, staff operations, and a connected Supabase backend are separate team tasks; they are not implemented yet.
+[Open the resource finder](https://owenpawl.github.io/Basic-Needs-Finder/).
+
+**Current status:** an anonymous public directory with 11 real WWU/Bellingham resources, search, location/type/service-day filters, provider details, directions, and a printable/downloadable resource plan. Each resource links to an official source with a checked date. No AI imagery, fabricated public inventory, student-data collection, location request, or analytics. Plan selections live in page memory and clear on reload.
+
+Live student accounts, shared inventory, messaging, reservations, and staff operations are separate team tasks and are not connected to the hosted Supabase project yet. The PostgreSQL foundation and fictional test fixtures remain available for their implementation; those fixtures are not imported into the public directory.
 
 ## Run the preview
 
-Use Node.js 24 and npm. No database is needed to view the committed demo catalog.
+Use Node.js 24 and npm. No database or Supabase credentials are needed for the directory.
 
 ```bash
 npm ci
@@ -37,7 +41,7 @@ npm run db:export-demo
 
 Migrations from `student-auth` onward depend on Supabase's auth objects (`auth.users`, `auth.uid()`, the `anon`/`authenticated` roles), so `db:migrate` stops with a clear error on plain PostgreSQL. For local work either use the disposable `_test` database below, where `npm run db:test-auth-shim` installs a test-only stand-in before migrating, or run the Supabase CLI's local stack for the real auth schema. The stand-in refuses any database whose name doesn't end in `_test` and any non-local host.
 
-The helper binds PostgreSQL 17 to localhost:55432 and retains a named volume. `npm run db:stop` stops the container without deleting data. Alternatively set DATABASE_URL to your own PostgreSQL development database. Seed records are fictional and reruns preserve existing rows. Remote seeding requires an intentional ALLOW_DEMO_SEED=1. Static export is limited to the demo campus and explicitly selected public fields; it never exports users or messages.
+The helper binds PostgreSQL 17 to localhost:55432 and retains a named volume. `npm run db:stop` stops the container without deleting data. Alternatively set DATABASE_URL to your own PostgreSQL development database. Seed records are fictional and reruns preserve existing rows. Remote seeding requires an intentional ALLOW_DEMO_SEED=1. `db:export-demo` refreshes the internal catalog fixture only; the public page uses `src/data/wwu-resources.json`. The fixture exporter never exports users or messages.
 
 ## Verify
 
@@ -62,6 +66,7 @@ Create the test database only once. Tests roll back their transactions. They val
 
 ## Hosting and team contracts
 
+- [Resource provenance, scope and verification](docs/WWU_RESOURCES.md)
 - [GitHub Pages and free Supabase deployment](docs/DEPLOYMENT.md)
 - [Actual schema/API boundary and task ownership](docs/API_CONTRACT.md)
 - [Foundation delivery and validation](docs/FOUNDATION.md)

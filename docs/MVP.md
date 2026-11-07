@@ -1,5 +1,8 @@
 # MVP scope
 
+> Current demo priority (Nov 7, user correction): anonymous WWU/Bellingham food-resource discovery, official sources and hours, directions/transit, SNAP help, and printable plans. No AI images or fictional public offerings. The exchange below remains the original implementation plan and must not be represented as live until verified. See [WWU_RESOURCES.md](WWU_RESOURCES.md).
+
+
 ## Goal
 
 Help students meet basic needs through free offers and requests, private conversations, and reliable pickup at campus exchange locations.
