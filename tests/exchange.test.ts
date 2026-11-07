@@ -465,6 +465,41 @@ test("authenticated inventory wrappers enforce actor/location and complete recei
     assert.equal(picked.data.lot.reserved, 0);
   }));
 
+test("staff at the pickup location can release a student's hold", async () =>
+  fixture(async (db, f) => {
+    await as(db, f.alice.subject);
+    const listing = await save(db, f.campus, randomUUID(), input(f));
+    const lot = listing.data.lots[0].lot_id;
+    await db.query("RESET ROLE");
+    await db.query("UPDATE \"Membership\" SET role='STAFF' WHERE id=$1", [
+      f.alice.membership,
+    ]);
+    await db.query(
+      'INSERT INTO "StaffAssignment"(id,"campusId","membershipId","locationId")VALUES($1,$2,$3,$4)',
+      [randomUUID(), f.campus, f.alice.membership, f.location],
+    );
+    await as(db, f.alice.subject);
+    await db.query("SELECT exchange_receive($1,2,$2)", [lot, randomUUID()]);
+    await as(db, f.bob.subject);
+    const held = (
+      await db.query("SELECT exchange_reserve($1,1,$2) r", [lot, randomUUID()])
+    ).rows[0].r.data.reservation.reservation_id;
+    await as(db, f.alice.subject);
+    const released = (
+      await db.query("SELECT exchange_cancel($1,$2) r", [held, randomUUID()])
+    ).rows[0].r;
+    assert.equal(released.data.reservation.status, "cancelled");
+    assert.equal(released.data.lot.reserved, 0);
+    await as(db, f.bob.subject);
+    const own = (
+      await db.query("SELECT exchange_reserve($1,1,$2) r", [lot, randomUUID()])
+    ).rows[0].r.data.reservation.reservation_id;
+    const cancelled = (
+      await db.query("SELECT exchange_cancel($1,$2) r", [own, randomUUID()])
+    ).rows[0].r;
+    assert.equal(cancelled.data.reservation.status, "cancelled");
+  }));
+
 test("message retries return one persisted message and reject changed payloads", async () =>
   fixture(async (db, f) => {
     await as(db, f.alice.subject);
