@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { BrandMark } from "@/components/brand-mark";
 import "./goods-exchange.css";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -111,9 +112,7 @@ export function ResourceFinder({ resources }: { resources: CampusResource[] }) {
       </div>
       <header className="site-header">
         <a href="#" className="brand">
-          <span className="brand-mark" aria-hidden="true">
-            W<span>+</span>
-          </span>
+          <BrandMark />
           <span>
             Viking Table<small>WESTERN · BELLINGHAM</small>
           </span>

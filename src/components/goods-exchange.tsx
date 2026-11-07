@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { BrandMark } from "@/components/brand-mark";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
@@ -211,9 +212,7 @@ export function GoodsExchange() {
       </a>
       <header className="exchange-header">
         <Link href="/" className="brand">
-          <span className="brand-mark" aria-hidden="true">
-            W<span>+</span>
-          </span>
+          <BrandMark />
           <span>
             Viking Table<small>WESTERN · BELLINGHAM</small>
           </span>
