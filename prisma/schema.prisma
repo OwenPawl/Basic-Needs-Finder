@@ -215,12 +215,12 @@ model InventoryEvent {
   reservedDelta  Int
   reason         String
   commandKey     String
-  requestHash    String?
+  requestHash    String
   reservationId  String?            @db.Uuid
-  onHandBefore   Int?
-  onHandAfter    Int?
-  reservedBefore Int?
-  reservedAfter  Int?
+  onHandBefore   Int
+  onHandAfter    Int
+  reservedBefore Int
+  reservedAfter  Int
   createdAt      DateTime           @default(now()) @db.Timestamptz(3)
   stockLot       StockLot           @relation(fields: [stockLotId, campusId], references: [id, campusId])
   actor          Membership         @relation(fields: [actorId, campusId], references: [id, campusId])
