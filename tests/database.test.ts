@@ -112,7 +112,7 @@ test("idempotency keys are unique for one actor but reusable by another", async 
     );
     assert.equal(event.rowCount, 1);
     await client.query(
-      'INSERT INTO "InventoryEvent" (id,"campusId","stockLotId","actorId",kind,"onHandDelta","reservedDelta",reason,"commandKey") VALUES ($1,$2,$3,$4,$5,0,0,$6,$7)',
+      'INSERT INTO "InventoryEvent" (id,"campusId","stockLotId","actorId",kind,"onHandDelta","reservedDelta",reason,"commandKey","onHandBefore","onHandAfter","reservedBefore","reservedAfter","requestHash") VALUES ($1,$2,$3,$4,$5,0,0,$6,$7,0,0,0,0,repeat(\'a\',64))',
       [
         randomUUID(),
         seedId(1),
@@ -125,7 +125,7 @@ test("idempotency keys are unique for one actor but reusable by another", async 
     );
     await assert.rejects(
       client.query(
-        'INSERT INTO "InventoryEvent" (id,"campusId","stockLotId","actorId",kind,"onHandDelta","reservedDelta",reason,"commandKey") VALUES ($1,$2,$3,$4,$5,0,0,$6,$7)',
+        'INSERT INTO "InventoryEvent" (id,"campusId","stockLotId","actorId",kind,"onHandDelta","reservedDelta",reason,"commandKey","onHandBefore","onHandAfter","reservedBefore","reservedAfter","requestHash") VALUES ($1,$2,$3,$4,$5,0,0,$6,$7,0,0,0,0,repeat(\'a\',64))',
         [
           randomUUID(),
           seedId(1),
@@ -139,4 +139,24 @@ test("idempotency keys are unique for one actor but reusable by another", async 
       { code: "23505" },
     );
   });
+});
+
+test("audit events cannot omit snapshots or a request hash", async () => {
+  for (const field of [
+    "onHandBefore",
+    "onHandAfter",
+    "reservedBefore",
+    "reservedAfter",
+    "requestHash",
+  ]) {
+    await transaction(async (client) => {
+      await assert.rejects(
+        client.query(
+          `UPDATE "InventoryEvent" SET "${field}"=NULL WHERE "commandKey"=$1`,
+          ["demo-receipt-100"],
+        ),
+        { code: "23502" },
+      );
+    });
+  }
 });
