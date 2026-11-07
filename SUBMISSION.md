@@ -22,27 +22,36 @@ We also provided recourses for students to apply for snap benefits.
 
 ## 4. Who will use this solution? (1200 < characters)
 
-*Draft:* Three groups use it. Students who need help: anyone short on food, a winter coat, school supplies, or household basics, including students who would never walk into a pantry because they feel embarrassed or don't know one exists. They can browse what is available, reserve an item, and pick it up privately at a campus location without sharing a phone number or address. Students who want to give: people moving out, graduating, or with extras they would otherwise throw away. They post an offer and drop it at a campus pickup point. Campus staff and volunteers: people at the pantry, mail office, or student center who confirm drop-offs and pickups, remove unsafe food, and see what is in stock at each location. The first version is built for WWU in Bellingham, but the data model supports more campuses and locations later.
+*Draft:* Three groups use it. Students who need food now: anyone can open the public WWU and Bellingham food directory without an account, see which pantry is open today, and get directions or SNAP application help, with no location tracking or sign-in. Students who need or have things: verified WWU students use the goods exchange to post offers and requests, reserve an item, and collect it privately at a campus pickup desk without sharing a phone number. Givers drop items off there instead of meeting strangers. Campus staff and volunteers at each pickup desk confirm drop-offs and pickups, remove unsafe or expired food, and review reported posts. The first version is built for WWU in Bellingham, and the data model supports more campuses and locations later.
 
 ## 5. What makes your idea unique? Who else is in this space? How is your idea different? (1200 < characters)
 
-*Draft:* Students already have campus food pantries, county food banks, Washington 211, Buy Nothing groups, and resale apps like Facebook Marketplace and OfferUp. Each solves part of the problem. Pantries have limited hours and only show stock in person. Buy Nothing groups and marketplaces mean meeting strangers and sharing contact details, and resale apps are built around selling. Basic Needs Finder combines a free peer-to-peer exchange with the reliability of a pantry: an item only appears as available after a staff member confirms it was physically dropped off at a campus location, students reserve it online and collect it there, and inventory is tracked so two people can never claim the same last item. Messaging stays inside the app, so no one has to publish a phone number. It also brings WWU and Bellingham resources, including SNAP (Basic Food in Washington) application help, into the same place students go to find free items.
+*Draft:* Students already have campus pantries, the Bellingham Food Bank, Washington 211, Buy Nothing groups, and resale apps. Each solves part of the problem, and the information is scattered. Basic Needs Finder puts both halves in one place. First, a food directory of real WWU and Bellingham resources, each with hours, access rules, and a link to its official source plus the date it was last checked, so students aren't sent to a closed pantry. Second, a free goods exchange with the reliability of a pantry: an item only shows as available after staff confirm it was physically dropped off, students reserve it and collect it at a campus desk, and the database guarantees two people can never claim the same last item. Messages stay inside the app, so no one has to publish a phone number, and food must be sealed, shelf-stable, and in date to be accepted.
 
 ## 6. Visual assets (diagrams and anything that illustrates the idea)
 
-*Draft:* The core exchange, from offer to pickup:
+*Draft:* Two flows. Finding food needs no account:
+
+```mermaid
+flowchart LR
+    S[Student opens the directory] --> F[Filter by open today, area, or type]
+    F --> R[Resource: hours, access, official source, date checked]
+    R --> D[Directions or SNAP application help]
+```
+
+Exchanging goods, from offer to pickup:
 
 ```mermaid
 flowchart LR
     A[Student posts an offer] --> B[Pledged: not yet available]
-    B -->|Staff confirms drop-off| C[Available at a campus location]
-    C -->|Another student reserves| D[Reserved: held for pickup]
+    B -->|Staff confirms drop-off| C[Available at a campus desk]
+    C -->|Another student reserves| D[Held for pickup]
     D -->|Cancelled or hold expires| C
     D -->|Staff confirms pickup| E[Collected]
     C -->|Staff removes unsafe item| F[Removed]
 ```
 
-Screen specifications and status badges are being designed in the ui-foundation task; add screenshots here once the app runs.
+Live directory: https://owenpawl.github.io/Basic-Needs-Finder/ . Add screenshots of the directory and exchange screens before submitting.
 
 ## 7. Who may want to sponsor this project
 
@@ -50,7 +59,7 @@ Screen specifications and status badges are being designed in the ui-foundation 
 
 ## 8. Feedback and improvements. How did you test and is it ADA compliant. (1000 < characters)
 
-*Draft (update with real results before submitting):* The app is still being built, so it has not yet been user-tested or audited for accessibility. What exists today: a written test plan covering every inventory step, including the race where two students try to reserve the last item, and exactly one must win. Accessibility is a design requirement: labeled form fields, full keyboard navigation with visible focus, status shown by text and icon rather than color alone, and layouts that work on a phone. Before the demo we plan to run an automated checker (axe), test with a screen reader (VoiceOver), check color contrast, and have a few students try the offer-to-pickup flow. We will not claim ADA compliance until those checks pass.
+*Draft (update before submitting):* Every change runs automated checks on a real PostgreSQL database: more than 40 tests covering sign-in rules, staff permissions, and every inventory step, including two students racing for the last item, repeated 50 times, where exactly one must win. A teammate fact-checked all 11 directory entries against official WWU, food bank, and state pages. During development we checked keyboard use, visible focus, and phone-width layouts. We have not yet run a formal accessibility audit (automated checker, screen reader, contrast) or tested with students, so we do not claim ADA compliance. Next steps are that audit, a short student walkthrough of the directory and exchange, and staff feedback from the pickup desks.
 
 ## 9. Distribution, if your prototype were to become a project, how would you distribute it? Who is the target audience? How would you find it? (800 < characters)
 
