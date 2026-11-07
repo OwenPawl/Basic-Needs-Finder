@@ -1,0 +1,353 @@
+Build a functional, modern web application for a university
+campus resource-sharing platform.
+
+PROJECT OVERVIEW
+
+The goal is to help college students meet basic needs by
+creating a centralized platform where students can offer,
+request, and exchange essential resources.
+
+The application should combine elements of Facebook
+Marketplace, OfferUp, and a campus food pantry, but focus
+on accessibility, community support, and free resources
+rather than commercial transactions.
+
+The platform should support secure exchanges through
+designated campus pickup and drop-off locations, such
+as university mail offices and participating campus
+buildings.
+
+CORE FEATURES
+
+1. STUDENT ACCOUNTS
+
+- Allow students to create accounts and log in.
+- Support university email verification.
+- Each student should have a profile showing their
+  active listings, requests, and exchange history.
+- Protect students' personal information.
+- Students should be able to communicate without
+  publicly exposing their contact information.
+
+2. RESOURCE CATEGORIES
+
+Organize listings into categories, including:
+
+- Food
+- Clothing
+- Shoes
+- Transportation / Carpooling
+- School Supplies
+- Household Essentials
+- Housing Resources
+- Healthcare Resources
+- Other
+
+Design the category system so additional categories
+can be added easily.
+
+3. OFFER AND REQUEST SYSTEM
+
+Students should be able to create two types of posts:
+
+OFFER:
+"I have something that another student can use."
+
+REQUEST:
+"I need something that another student might have."
+
+Each listing should include:
+- Title
+- Description
+- Category
+- Images
+- Quantity, where applicable
+- Pickup or exchange location
+- Availability status
+- Date posted
+
+Students should be able to browse both offers and
+requests.
+
+Students should also be able to respond to listings.
+
+For example:
+
+Student A posts:
+"I have three extra winter jackets."
+
+Student B responds:
+"I could use one. Is a medium available?"
+
+Alternatively:
+
+Student A posts:
+"I need a winter jacket."
+
+Student B responds:
+"I have one I can donate."
+
+Include a messaging system to facilitate these
+interactions.
+
+4. CAMPUS PICKUP AND DROP-OFF LOCATIONS
+
+Designate specific university buildings, such as
+campus mail offices, as secure exchange locations.
+
+Students should be able to:
+
+- Select a designated drop-off location.
+- Indicate that they intend to donate an item.
+- See which items are available at each location.
+- Reserve an available item for pickup.
+- Receive instructions for collecting the item.
+
+The system should distinguish between:
+
+- Items offered but not yet dropped off.
+- Items physically received at a campus location.
+- Items reserved for pickup.
+- Items successfully collected.
+
+Staff or authorized volunteers should be able to
+confirm when items are physically received or
+collected.
+
+Do not assume an item is physically available
+until its drop-off has been confirmed.
+
+5. LIVE INVENTORY TRACKING
+
+Each participating campus location should have
+a digital inventory.
+
+When an item is dropped off and confirmed:
+- Increase its available inventory.
+
+When an item is reserved:
+- Reduce the quantity available for new reservations.
+
+When an item is picked up:
+- Mark the corresponding reservation as completed.
+- Update the inventory accordingly.
+
+If a reservation is canceled or expires:
+- Return the reserved quantity to available inventory.
+
+Prevent multiple students from reserving the same
+last available item.
+
+Students should be able to browse inventory by:
+
+- Category
+- Campus location
+- Availability
+- Item type
+- Date added
+
+Include an inventory dashboard for each location.
+
+6. FOOD-SPECIFIC FEATURES
+
+Food listings should require photographs.
+
+Include:
+- Food name
+- Quantity
+- Expiration or best-by date
+- Whether the package is opened
+- Storage requirements
+- Allergen information, when known
+
+Allow filtering by food type and dietary restrictions.
+
+Include food safety guidelines.
+
+For the initial version, restrict food donations to
+sealed, shelf-stable items unless the university has
+approved procedures for handling other foods.
+
+7. CARPOOLING SYSTEM
+
+Create a separate transportation-sharing interface.
+
+Students offering rides should specify:
+
+- Starting location
+- Destination
+- Departure date
+- Departure time
+- Available passenger seats
+- Optional intermediate stops
+- Additional notes
+
+Students requesting rides should specify:
+
+- Starting location
+- Destination
+- Preferred date and time
+- Number of passengers
+
+Allow users to search and filter rides based on
+location, date, time, and available capacity.
+
+Automatically update remaining seats as reservations
+are confirmed.
+
+Unlike physical goods, carpool listings should not
+use campus mail-office inventory.
+
+Include appropriate transportation safety notices
+and reporting tools.
+
+8. SEARCH AND DISCOVERY
+
+Implement a search interface that supports:
+
+- Keyword searches
+- Resource categories
+- Offers versus requests
+- Campus pickup locations
+- Currently available items
+- Recently posted listings
+
+Provide a dedicated view showing everything
+currently available for pickup at each campus
+location.
+
+9. MESSAGING AND NOTIFICATIONS
+
+Allow students to communicate about offers and
+requests.
+
+Implement notifications for:
+
+- Responses to listings
+- New messages
+- Reservation confirmations
+- Items becoming available
+- Successful drop-offs
+- Items ready for pickup
+- Upcoming reservation expirations
+
+10. ADMINISTRATIVE DASHBOARD
+
+Create an administrative interface for authorized
+campus employees or volunteers.
+
+Administrators should be able to:
+
+- Manage campus exchange locations.
+- Confirm item drop-offs.
+- Confirm item pickups.
+- View and update inventory.
+- Moderate inappropriate listings.
+- Remove expired or unsafe food listings.
+- Resolve inventory discrepancies.
+- Review reported users or content.
+
+Include a simple dashboard showing:
+
+- Total available items
+- Active requests
+- Completed exchanges
+- Inventory by category
+- Inventory by location
+
+11. USER INTERFACE
+
+Create a clean, modern, responsive interface.
+
+Prioritize:
+- Mobile usability
+- Accessibility
+- Simple navigation
+- Clear category organization
+- Easy listing creation
+- Easy inventory browsing
+- Minimal friction for students seeking help
+
+The platform should feel welcoming and community
+oriented rather than transactional.
+
+Use clear visual distinctions between offers,
+requests, reserved items, and available inventory.
+
+12. TECHNICAL IMPLEMENTATION
+
+Choose a practical modern web stack.
+
+Suggested technologies:
+- Next.js
+- TypeScript
+- Tailwind CSS
+- PostgreSQL
+- Prisma ORM
+
+Implement:
+- Reusable UI components
+- Persistent database storage
+- Authentication and authorization
+- Server-side validation
+- Secure messaging
+- Transactional inventory updates
+- Responsive layouts
+- Accessible form controls
+
+Design the database to support multiple university
+campuses and multiple pickup locations in the future.
+
+13. MVP PRIORITIES
+
+Prioritize implementing a working minimum viable
+product before advanced functionality.
+
+The first version should include:
+
+1. Student authentication
+2. Creating offers and requests
+3. Browsing and filtering listings
+4. Resource categories
+5. Campus exchange locations
+6. Inventory tracking
+7. Item reservations
+8. Drop-off and pickup confirmation
+9. Basic messaging
+10. Administrative inventory management
+
+After these features work, implement carpooling,
+notifications, and additional resource categories.
+
+14. DEVELOPMENT EXPECTATIONS
+
+Start by examining the existing repository.
+
+If the repository is empty, initialize the project.
+
+Create the database schema and application structure.
+
+Implement functional features rather than static
+mockups.
+
+Use seed data to demonstrate realistic campus
+resource exchanges.
+
+Include instructions for:
+- Installing dependencies
+- Configuring environment variables
+- Setting up the database
+- Running the application locally
+- Running tests
+
+Write tests for important inventory operations,
+especially simultaneous reservations, cancellations,
+and pickup confirmations.
+
+Make reasonable implementation decisions when
+details are unspecified.
+
+The final product should demonstrate how a university
+could use technology to reduce barriers to accessing
+essential resources through peer-to-peer sharing and
+centralized campus distribution.

@@ -1,0 +1,231 @@
+{
+  "status": "draft; not assigned or claimed",
+  "tasks": [
+    {
+      "id": "app-foundation",
+      "title": "Scaffold the app and agree on the data/API contract",
+      "description": "Inspect the empty repository, confirm the proposed stack with the team, scaffold the application, and publish the initial campus-aware schema, migrations, seed approach, and shared interface contract. Coordinate auth boundaries with the authentication task.",
+      "acceptance": "A clean clone starts with documented environment setup; PostgreSQL migrations and fictional seeds run; a minimal application page renders; campus/location/category/listing/stock/reservation/conversation records and authorization boundaries are documented; API/types contracts are agreed with the team.",
+      "tags": [
+        "fullstack",
+        "database",
+        "architecture"
+      ],
+      "depends_on": [],
+      "priority": 10,
+      "estimate_minutes": 90,
+      "demo_required": true,
+      "context": {
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
+        "interface": "Own the application skeleton, database migrations, package configuration, and shared contracts. UI work can proceed using the fixtures documented by ui-foundation.",
+        "deliverable": "Runnable starter, migration/seed commands, environment example without secrets, and agreed schema/API types."
+      }
+    },
+    {
+      "id": "ui-foundation",
+      "title": "Define accessible student and staff screens",
+      "description": "Create the student browse, listing detail/create, profile/history, reservation, inbox, and staff-inventory flow. Specify mobile layouts, form labels, empty/error/loading states, and sample data matching the proposed domain contract. Coordinate shared component ownership with the app foundation task.",
+      "acceptance": "A teammate can follow the complete offer \u2192 receipt \u2192 reservation \u2192 pickup flow from the screen specifications; offers/requests/pending/reserved/available states are visibly distinct; keyboard/focus/form-label requirements and narrow-screen behavior are recorded; fixtures contain fictional data.",
+      "tags": [
+        "design",
+        "frontend",
+        "accessibility"
+      ],
+      "depends_on": [],
+      "priority": 9,
+      "estimate_minutes": 60,
+      "demo_required": true,
+      "context": {
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
+        "interface": "Produce interface/fixture specifications independently; wire functional UI in the implementation tasks after the shared contract is accepted.",
+        "deliverable": "Screen/flow specifications, shared UI conventions, and example payloads for student and staff views."
+      }
+    },
+    {
+      "id": "inventory-test-cases",
+      "title": "Specify inventory transitions and race-condition checks",
+      "description": "Turn the domain invariants into explicit test cases and fixtures covering pledges, receipts, reservations, cancellation, expiry, pickup, correction, and unauthorized operations. Define how independent database clients race for the last item.",
+      "acceptance": "Expected stock/hold/reservation values are written for every transition; duplicate requests, concurrent reserve/cancel/expiry/pickup, and removal of unsafe stock have expected outcomes; test fixtures distinguish pledged from received items; the concurrency check requires exactly one successful reservation for one available item.",
+      "tags": [
+        "testing",
+        "database",
+        "inventory"
+      ],
+      "depends_on": [],
+      "priority": 10,
+      "estimate_minutes": 45,
+      "demo_required": true,
+      "context": {
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
+        "interface": "Provide test vectors and expected outcomes before implementation; inventory-core implements executable database tests from them.",
+        "deliverable": "Reviewable inventory test matrix and concurrency-test specification."
+      }
+    },
+    {
+      "id": "student-auth",
+      "title": "Implement verified student sessions and staff permissions",
+      "description": "Implement sign-up/sign-in, configured university-domain verification, campus membership, and location-scoped staff authorization. Expose a session contract for other tasks and a profile/history shell. Keep personal contact data private.",
+      "acceptance": "Unverified users cannot make student-only mutations; students cannot self-assign staff roles; staff authority is checked at the relevant campus/location; unauthorized object access is rejected server-side; sign-in/out and verification are exercised; development email handling is clearly separated from production.",
+      "tags": [
+        "auth",
+        "backend",
+        "security"
+      ],
+      "depends_on": [
+        "app-foundation"
+      ],
+      "priority": 10,
+      "estimate_minutes": 90,
+      "demo_required": true,
+      "context": {
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
+        "interface": "Own session/membership and server authorization helpers; other features consume these rather than inventing role checks.",
+        "deliverable": "Working authentication, verification, authorization helpers, and representative access-control tests."
+      }
+    },
+    {
+      "id": "inventory-core",
+      "title": "Implement transactional stock and reservations",
+      "description": "Implement receipt, reserve, cancellation, expiry, pickup, and correction transactions. Use conditional updates or locking to preserve physical stock and hold counts. Include auditable events and idempotent state transitions. Domain service authorization context will be supplied by student-auth at route integration.",
+      "acceptance": "Database-backed tests pass for all specified transitions; simultaneous reservations cannot oversell; duplicate receipts and pickup commands change inventory once; cancel/expiry release holds once; expired holds do not permanently block stock; quantities remain nonnegative and campus/location boundaries are enforced.",
+      "tags": [
+        "backend",
+        "database",
+        "inventory",
+        "testing"
+      ],
+      "depends_on": [
+        "app-foundation",
+        "inventory-test-cases"
+      ],
+      "priority": 10,
+      "estimate_minutes": 120,
+      "demo_required": true,
+      "context": {
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
+        "interface": "Own stock/reservation service and inventory schema extensions coordinated with foundation. Export typed operations for reservation-flow and staff-console; no unauthenticated mutation routes.",
+        "deliverable": "Transactional inventory service, audit records, and executable PostgreSQL concurrency/idempotency tests."
+      }
+    },
+    {
+      "id": "listings-discovery",
+      "title": "Build offers, requests, profiles, and discovery",
+      "description": "Implement persistent offers and requests, category/location search, image handling, listing responses, student profiles/history, and the view of currently available pickup inventory. Enforce the supplied food metadata and sealed shelf-stable restriction when accepting food.",
+      "acceptance": "A verified student can create/edit their own listing; both post types are searchable and filterable; pending donations are never labeled available; invalid data and unauthorized edits fail server-side; food rules and photo requirement are validated; mobile forms and empty/error states work; public responses do not expose contact data.",
+      "tags": [
+        "frontend",
+        "backend",
+        "listings"
+      ],
+      "depends_on": [
+        "app-foundation",
+        "ui-foundation",
+        "student-auth"
+      ],
+      "priority": 9,
+      "estimate_minutes": 120,
+      "demo_required": true,
+      "context": {
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
+        "interface": "Consume auth and inventory contracts. Coordinate private response entry with messaging; quantity shown as available comes from confirmed stock, not the listing pledge.",
+        "deliverable": "Functional student listings/discovery/profile flows with persistent data and validation checks."
+      }
+    },
+    {
+      "id": "reservation-flow",
+      "title": "Connect student reservations and collection instructions",
+      "description": "Connect available inventory to reserve/cancel actions, reservation status/history, expiry feedback, and collection instructions. Handle contention by showing the current result and availability.",
+      "acceptance": "A student reserves only confirmed stock, sees location/instructions/expiry, and can cancel their own active hold; insufficient-stock and expired-reservation errors are clear; repeat clicks cannot duplicate reservations; inventory updates persist across sessions; other users cannot access or cancel the reservation.",
+      "tags": [
+        "frontend",
+        "backend",
+        "reservations"
+      ],
+      "depends_on": [
+        "student-auth",
+        "inventory-core",
+        "listings-discovery"
+      ],
+      "priority": 10,
+      "estimate_minutes": 90,
+      "demo_required": true,
+      "context": {
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
+        "interface": "Use inventory-core transactions and student-auth session helpers. UI must not maintain a separate stock counter.",
+        "deliverable": "Working end-to-end student reservation/cancellation flow and integration checks."
+      }
+    },
+    {
+      "id": "staff-console",
+      "title": "Build staff receipt, pickup, moderation, and inventory views",
+      "description": "Implement location-scoped staff receipt/pickup confirmation, inventory views/corrections, location management, listing/report moderation, food removal, and basic counts for available items, requests, and completed exchanges.",
+      "acceptance": "Authorized staff can confirm real receipt/pickup and see inventory change; students and other-location staff cannot perform those operations; correction reasons and actors are recorded; unsafe/expired food is unavailable; reports and listing removal are reviewable; summary counts use persisted data.",
+      "tags": [
+        "frontend",
+        "backend",
+        "admin"
+      ],
+      "depends_on": [
+        "student-auth",
+        "inventory-core",
+        "ui-foundation"
+      ],
+      "priority": 10,
+      "estimate_minutes": 120,
+      "demo_required": true,
+      "context": {
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
+        "interface": "Consume shared authorization and inventory transactions. Do not implement a second receipt/pickup path with different rules.",
+        "deliverable": "Functional staff console, moderation/reporting entry points, and scoped authorization checks."
+      }
+    },
+    {
+      "id": "private-messaging",
+      "title": "Implement private listing conversations",
+      "description": "Implement persistent listing conversations and a basic inbox so students can respond to offers or requests without publishing contact information. Include understandable send/loading/error states.",
+      "acceptance": "Two verified participants can start and continue a listing conversation; unrelated users cannot read or send to it; messages persist across sign-in sessions; public listing/profile payloads exclude private messages and contact details; server validation and mobile usability are checked.",
+      "tags": [
+        "frontend",
+        "backend",
+        "messaging"
+      ],
+      "depends_on": [
+        "student-auth",
+        "listings-discovery"
+      ],
+      "priority": 8,
+      "estimate_minutes": 90,
+      "demo_required": true,
+      "context": {
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
+        "interface": "Use the shared session and conversation contract. Polling is acceptable for the MVP; advanced delivery notifications follow later.",
+        "deliverable": "Working inbox/conversations, privacy checks, and a two-user demonstration."
+      }
+    },
+    {
+      "id": "demo-integration",
+      "title": "Integrate and verify the complete campus exchange",
+      "description": "Integrate reviewed contributions, run the full MVP demonstration, verify the real database concurrency checks, and finish clean-clone setup and test instructions. Record known limitations honestly.",
+      "acceptance": "The full script in docs/MVP.md passes against one recorded integration commit; clean-clone install/environment/database/seed/run/test instructions work; desktop and narrow-screen flows are checked; no credentials or real student data are committed; reviewed, integrated, and demo-verified stages each have actual evidence.",
+      "tags": [
+        "integration",
+        "testing",
+        "documentation",
+        "demo"
+      ],
+      "depends_on": [
+        "reservation-flow",
+        "staff-console",
+        "private-messaging"
+      ],
+      "priority": 10,
+      "estimate_minutes": 90,
+      "demo_required": true,
+      "context": {
+        "repository": "https://github.com/OwenPawl/Basic-Needs-Finder",
+        "interface": "Integrate reviewed branches after coordinating owners. Publish the exact integration commit and checks; do not count the planning files as implemented features.",
+        "deliverable": "Reproducible working MVP demo, setup documentation, test results, and pinned integration evidence."
+      }
+    }
+  ]
+}
