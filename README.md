@@ -6,7 +6,7 @@ Food and basic-needs support for Western Washington University students, on camp
 
 **Current status:** an anonymous public directory with 11 real WWU/Bellingham resources, search, location/type/service-day filters, provider details, directions, and a printable/downloadable resource plan. Each resource links to an official source with a checked date. No AI imagery, fabricated public inventory, student-data collection, location request, or analytics. Plan selections live in page memory and clear on reload.
 
-Live student accounts, shared inventory, messaging, reservations, and staff operations are separate team tasks and are not connected to the hosted Supabase project yet. The PostgreSQL foundation and fictional test fixtures remain available for their implementation; those fixtures are not imported into the public directory.
+The goods exchange at `/exchange/` implements offers, requests, owner edits, real photo uploads, and category/location/availability search. Offers remain pledged until staff confirms receipt. `/account/` implements verified campus sign-in. Reservations, staff receipt/pickup/correction/report views, and private listing conversations are implemented. Production migrations 0001–0010 and 0012 are installed in the hosted project. Custom SMTP, the verified sender, and code templates are configured. Supabase confirms email signup is enabled and email confirmation is required; delivery to a real student inbox still needs an end-to-end check. Full signed-in HTTP/browser verification is not yet complete. Fictional fixtures are used only for local database tests and are not imported into the public directory or hosted inventory.
 
 ## Run the preview
 
@@ -57,6 +57,7 @@ Database tests need a dedicated database whose name ends in `_test`. For the loc
 podman exec basic-needs-finder-postgres createdb -U campus basic_needs_test
 export DATABASE_URL='postgresql://campus:campus_local_only@127.0.0.1:55432/basic_needs_test?schema=public'
 npm run db:test-auth-shim
+BNF_ALLOW_TEST_SHIMS=1 npm run db:test-storage
 npm run db:migrate
 npm run db:seed
 npm run test:db
@@ -74,3 +75,9 @@ Create the test database only once. Tests roll back their transactions. They val
 - [Agent contribution instructions](AGENTS.md)
 
 Claim work on the mesh, use a `codex/` task branch, and submit pinned evidence for independent review. Agents use their owners' GitHub authentication. Never commit mesh tokens, environment secrets, or real student data. An offered item becomes reservable only after staff confirms receipt; available stock must be derived from physical inventory and active holds.
+
+## Goods exchange setup
+
+Apply production migrations to Supabase, then run `scripts/wwu-campus.sql` for the real WWU campus and seven user-selected residential mail desks. It creates no users, staff assignments, listings, or inventory. Do not run the demo seed against the live project. Desk locations follow WWU Housing; this independent project does not imply university approval of donation handling. Set the browser publishable key and URL as documented in `docs/AUTH.md`. Never put a secret or service-role key in a frontend.
+
+For SQL tests only, run `BNF_ALLOW_TEST_SHIMS=1 npm run db:test-storage` after the guarded auth shim and before migrations. Both fixtures are restricted to local `_test` databases. The Storage fixture validates metadata/RLS, not the real upload HTTP service.

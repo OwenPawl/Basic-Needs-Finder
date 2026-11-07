@@ -1,0 +1,181 @@
+.operations-page {
+  max-width: 1200px;
+  margin: auto;
+  padding: 32px;
+}
+.operations-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.operations-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin: 25px 0;
+}
+.operations-heading h1 {
+  font-size: 38px;
+  margin: 12px 0;
+}
+.operations-heading p:last-child,
+.operations-help {
+  color: var(--muted);
+  font-size: 14px;
+}
+.operations-nav {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--line);
+  padding: 0 0 20px;
+  margin-bottom: 25px;
+  font-size: 14px;
+  color: var(--blue);
+}
+.operations-page > section {
+  padding: 0;
+}
+.operations-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+.operations-card {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 22px;
+  min-width: 0;
+}
+.operations-card h3 {
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+.operations-card p {
+  font-size: 14px;
+  margin: 8px 0;
+  overflow-wrap: anywhere;
+}
+.operations-card > img {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+  background: var(--paper);
+  margin-bottom: 18px;
+}
+.operations-card label,
+.operations-reserve label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 12px 0;
+}
+.operations-card input,
+.operations-reserve input {
+  font: inherit;
+  font-size: 16px;
+  min-width: 0;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #bdccd6;
+  border-radius: 5px;
+}
+.operations-card summary {
+  padding: 16px 0;
+  cursor: pointer;
+  color: var(--blue);
+  font-size: 14px;
+}
+.operations-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.operations-card .button {
+  margin-top: 12px;
+  font-size: 13px;
+}
+.operations-counts {
+  display: flex;
+  gap: 35px;
+  background: var(--pale);
+  border-radius: 8px;
+  padding: 22px;
+  margin-bottom: 30px;
+}
+.operations-counts > div {
+  display: grid;
+  gap: 6px;
+}
+.operations-counts strong {
+  font-size: 30px;
+  color: var(--navy);
+}
+.operations-counts span {
+  font-size: 13px;
+}
+.operations-reserve {
+  background: var(--pale);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 24px !important;
+  margin-bottom: 30px !important;
+}
+.operations-reserve h2 {
+  margin-bottom: 12px;
+}
+.operations-reserve form {
+  display: flex;
+  align-items: end;
+  gap: 16px;
+  margin-top: 14px;
+}
+.operations-reserve label {
+  margin: 0;
+}
+.operations-reservations {
+  margin-top: 35px !important;
+}
+.operations-id {
+  font-size: 11px !important;
+  color: var(--muted);
+}
+.operations-page button:disabled {
+  opacity: 0.5;
+}
+@media (max-width: 620px) {
+  .operations-page {
+    padding: 20px;
+  }
+  .operations-heading {
+    display: block;
+  }
+  .operations-heading h1 {
+    font-size: 31px;
+  }
+  .operations-heading > button {
+    margin-top: 16px;
+  }
+  .operations-grid {
+    grid-template-columns: 1fr;
+  }
+  .operations-nav {
+    gap: 16px;
+  }
+  .operations-counts {
+    gap: 16px;
+    padding: 18px;
+  }
+  .operations-counts span {
+    font-size: 11px;
+  }
+  .operations-reserve form {
+    display: block;
+  }
+  .operations-reserve button {
+    margin-top: 12px;
+  }
+}

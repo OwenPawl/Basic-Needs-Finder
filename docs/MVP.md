@@ -1,6 +1,6 @@
 # MVP scope
 
-> Current demo priority (Nov 7, user correction): anonymous WWU/Bellingham food-resource discovery, official sources and hours, directions/transit, SNAP help, and printable plans. No AI images or fictional public offerings. The exchange below remains the original implementation plan and must not be represented as live until verified. See [WWU_RESOURCES.md](WWU_RESOURCES.md).
+> Current demo priority (Nov 7, user correction): anonymous WWU/Bellingham food-resource discovery, official sources and hours, directions/transit, SNAP help, and printable plans. No AI images or fictional public offerings. The user subsequently reaffirmed that the goods exchange below is required alongside the directory. Neither area replaces the other. Do not represent unverified backend flows as live. See [WWU_RESOURCES.md](WWU_RESOURCES.md).
 
 
 ## Goal

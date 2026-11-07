@@ -13,14 +13,15 @@
     "preview": "node scripts/preview.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:db": "tsx --test tests/database.test.ts tests/auth.test.ts tests/inventory.test.ts tests/messaging.test.ts",
+    "test:db": "tsx --test tests/database.test.ts tests/auth.test.ts tests/inventory.test.ts tests/exchange.test.ts tests/messaging.test.ts",
     "db:start": "node scripts/database.mjs start",
     "db:stop": "node scripts/database.mjs stop",
     "db:generate": "prisma generate",
     "db:test-auth-shim": "node scripts/test-auth-shim.mjs",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "prisma db seed",
-    "db:export-demo": "tsx scripts/export-demo.ts"
+    "db:export-demo": "tsx scripts/export-demo.ts",
+    "db:test-storage": "node scripts/test-storage-setup.mjs"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.10.1",

@@ -22,7 +22,7 @@ This delivers authentication for the GitHub Pages + Supabase Free design: verifi
 
 ## Row-level security
 
-- `anon` has no table access and cannot call the RPCs. The static demo catalog serves anonymous browsing.
+- `anon` has no table access and cannot call the RPCs. The public directory serves real, sourced WWU/Bellingham resources for anonymous browsing.
 - `authenticated` can only `SELECT`, and only through these policies. There are no browser `INSERT`/`UPDATE`/`DELETE` policies: every mutation goes through a `SECURITY DEFINER` RPC that checks authority itself (as `note:inventory-on-supabase` requires).
 
 | Table | Readable by |
@@ -57,20 +57,20 @@ The `app` schema isn't exposed by Supabase's Data API, so these helpers can't be
 
 When a later migration adds a table in `public`, enable RLS on it and revoke `anon`/`authenticated` privileges explicitly. Supabase's default privileges would otherwise grant them.
 
-## Supabase setup for Owen (not applied yet)
+## Hosted setup and remaining configuration
 
-These steps need the project owner in the Supabase dashboard; nothing has been changed on the hosted project.
+Production migrations 0001–0010 and 0012 and the real WWU campus/mail-desk configuration are installed in the hosted project. There are no seeded users, staff assignments, or fictional goods. Custom SMTP is configured on the free plan, both sign-up and sign-in templates include `{{ .Token }}`, and the Site URL is the GitHub Pages URL. The SMTP sender is verified; a full hosted sign-in test is still pending. For a new installation:
 
 1. Apply the migrations in order (`prisma migrate deploy` with the project's database URL, from a trusted machine). Do **not** run `db:test-auth-shim` there: it refuses non-`_test` databases and Supabase roles anyway.
 2. Auth → Providers → Email: enabled, **Confirm email** on.
 3. Auth → Email Templates → *Magic Link* (also used for OTP sign-in): include the code, e.g. `<p>Your Basic Needs Finder code is <strong>{{ .Token }}</strong></p>`. Without `{{ .Token }}` Supabase sends only a link, and the static page has no link handler.
 4. Auth → URL Configuration: Site URL `https://owenpawl.github.io/Basic-Needs-Finder/`.
 5. Build configuration: set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (the publishable/anon key, never the service-role key) for `npm run build:pages`. Without them `/account/` shows “Accounts are coming soon”.
-6. Add the real campus row with `emailDomains = {wwu.edu}` only after campus approval, and grant the first admin with the operator SQL above.
+6. Configure the real campus with `scripts/wwu-campus.sql` and grant the first admin with the operator SQL above only after identifying and authorizing that verified account. This independent hackathon prototype checks ownership of a WWU email; it does not imply university endorsement or approval of donation handling at the selected mail desks.
 
 ## Development vs production email
 
-- **Production (hosted Supabase):** Auth → Providers → Email must have **Confirm email enabled**. Don't enable auto-confirm. Add the GitHub Pages URL (`https://owenpawl.github.io/Basic-Needs-Finder/`) to the Site URL and redirect allow-list. Each real campus's `emailDomains` must list only its real university domains, and only after campus approval.
+- **Production (hosted Supabase):** Auth → Providers → Email must have **Confirm email enabled**. Don't enable auto-confirm. Add the GitHub Pages URL (`https://owenpawl.github.io/Basic-Needs-Finder/`) to the Site URL and redirect allow-list. Each campus's `emailDomains` must list only its real university domains; domain verification is not institutional endorsement.
 - **Development:** use the Supabase CLI's local stack, which catches all mail in its local inbox (Inbucket/Mailpit). Never point a development project at real student addresses.
 - **Fictional demo campus:** its only domain is `students.example.invalid`. The `.invalid` top-level domain can never receive mail, so nobody can self-verify into the demo campus on a hosted project. Demo memberships exist only through the fictional seed.
 - **Local PostgreSQL and CI:** the migration never creates auth objects; it stops with a clear error if `anon`/`authenticated`, `auth.users` or `auth.uid()` are missing. For disposable test databases, `npm run db:test-auth-shim` installs a stand-in from `scripts/test-auth-shim.sql` **before** `db:migrate` (CI does this). It refuses any database whose name doesn't end in `_test`, any non-local host, and any database with Supabase roles. The stand-in `auth.uid()` trusts a session setting, which is exactly why it must never reach a real database. Tests simulate a signed-in browser by switching to the `authenticated` role with JWT claims, as PostgREST does.
@@ -96,6 +96,6 @@ These steps need the project owner in the Supabase dashboard; nothing has been c
 ## Not done yet
 
 - **Not exercised end to end:** real Supabase email delivery, code entry, profile, campus verification and sign-out against a hosted or local Supabase stack. The page was checked in a browser for the “not connected” state and the send-code error path only; the database side is covered by `tests/auth.test.ts` with the test stand-in, which does not prove the hosted flow.
-- Applying the migration and the setup steps above to the hosted project (needs the owner).
+- Proving actual email delivery and assigning an authorized first staff/admin account.
 - Rate limiting and abuse controls beyond what Supabase Auth provides.
 - Future migrations still need RLS and explicit grants on each new table. The default-privilege revoke covers objects created by the migration role; on plain PostgreSQL that test passes trivially because nothing is granted by default.

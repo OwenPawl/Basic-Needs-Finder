@@ -54,6 +54,10 @@ export function Inbox() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const client = useRef<SupabaseClient | null>(null);
+  const requestKey = useRef("");
+  const previousBody = useRef("");
+  const sendingRef = useRef(false);
+  const openRequest = useRef(0);
   const log = useRef<HTMLOListElement>(null);
 
   const loadList = useCallback(async () => {
@@ -63,11 +67,13 @@ export function Inbox() {
   }, []);
 
   const open = useCallback(async (id: string) => {
+    const request = ++openRequest.current;
     setError("");
     const { data, error: e } = await client.current!.rpc(
       "conversation_messages",
       { conversation_id: id },
     );
+    if (request !== openRequest.current) return;
     if (e) return setError(friendly(e, "We couldn’t open that conversation."));
     setThread(data as Thread);
     const url = new URL(window.location.href);
@@ -103,17 +109,47 @@ export function Inbox() {
     log.current?.lastElementChild?.scrollIntoView({ block: "nearest" });
   }, [thread]);
 
+  useEffect(() => {
+    if (view !== "ready") return;
+    const timer = setInterval(() => {
+      if (document.visibilityState === "visible") {
+        void loadList();
+        if (thread) void open(thread.conversation_id);
+      }
+    }, 10000);
+    return () => clearInterval(timer);
+  }, [view, thread?.conversation_id, loadList, open]);
+
   async function send(event: React.FormEvent) {
     event.preventDefault();
-    if (!thread || !draft.trim()) return;
+    if (!thread || !draft.trim() || sendingRef.current) return;
+    sendingRef.current = true;
+    const identity = thread.conversation_id + "/" + draft.trim();
+    if (previousBody.current !== identity || !requestKey.current) {
+      previousBody.current = identity;
+      requestKey.current = crypto.randomUUID();
+    }
     setBusy(true);
     setError("");
-    const { error: e } = await client.current!.rpc("send_message", {
-      conversation_id: thread.conversation_id,
-      body: draft,
-    });
+    const { data: sent, error: e } = await client.current!.rpc(
+      "send_message_once",
+      {
+        conversation_id: thread.conversation_id,
+        body: draft,
+        idempotency_key: requestKey.current,
+      },
+    );
     setBusy(false);
+    sendingRef.current = false;
+    if (sent?.error)
+      return setError(
+        friendly(
+          { message: sent.error.code },
+          "Your message was not confirmed. Try again.",
+        ),
+      );
     if (e) return setError(friendly(e, "Your message wasn’t sent. Try again."));
+    requestKey.current = "";
     setDraft("");
     await open(thread.conversation_id);
     await loadList();
@@ -248,7 +284,8 @@ export function Inbox() {
                     </label>
                     <p id="composer-help" className={styles.help}>
                       Don’t share personal contact details. Meet only at the
-                      listed campus location. Ctrl/⌘+Enter sends.
+                      listed campus location. Ctrl/⌘+Enter sends. Messages
+                      refresh every 10 seconds.
                     </p>
                     <button
                       className={base.primary}

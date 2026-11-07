@@ -23,7 +23,7 @@ const messages: Record<string, string> = {
   NOT_FOUND: "We couldn’t find that campus.",
   VALIDATION_ERROR: "Please check the highlighted field.",
   INVALID_STATE:
-    "This account needs a campus staff member to finish setup. Please contact the Basic Needs Hub.",
+    "This account needs a campus staff member to finish setup. Please contact your project organizer.",
 };
 
 function friendly(error: unknown, fallback: string) {
@@ -414,11 +414,21 @@ export function Account() {
                 <h2 id="history-title">Your activity</h2>
                 <div className={styles.empty}>
                   <p>
-                    <b>No offers, requests or reservations yet.</b>
+                    <a href="../exchange/">Your offers and requests →</a>
                   </p>
                   <p>
-                    When the campus exchange opens, your history appears here.
+                    <a href="../reservations/">
+                      Reservations and pickup history →
+                    </a>
                   </p>
+                  <p>
+                    <a href="../inbox/">Private messages →</a>
+                  </p>
+                  {membership.staff_location_ids.length > 0 && (
+                    <p>
+                      <a href="../staff/">Staff inventory and pickups →</a>
+                    </p>
+                  )}
                 </div>
               </section>
               <button

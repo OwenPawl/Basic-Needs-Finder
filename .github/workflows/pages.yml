@@ -38,6 +38,9 @@ jobs:
       - run: npm ci
       - run: npm run db:generate
       - run: npm run db:test-auth-shim
+      - run: npm run db:test-storage
+        env:
+          BNF_ALLOW_TEST_SHIMS: "1"
       - run: npm run db:migrate
       - run: npm run db:seed
       - run: npm run typecheck
@@ -45,6 +48,9 @@ jobs:
       - run: npm test
       - run: npm run test:db
       - run: npm run build:pages
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://zwmkhxflaznbsusmcncm.supabase.co
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_KgbqluvGp3-fBKmVm8fBwQ_ceUmtfL7
       - uses: actions/upload-pages-artifact@v5.0.0
         if: github.event_name != 'pull_request'
         with:
