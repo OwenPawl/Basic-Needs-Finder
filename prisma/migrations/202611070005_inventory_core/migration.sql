@@ -112,14 +112,35 @@ CREATE FUNCTION inventory.member(p_actor uuid, p_campus uuid) RETURNS public."Me
   SELECT m.* FROM public."Membership" m WHERE m.id = p_actor AND m."campusId" = p_campus
 $$;
 
+-- Physical stock authority is per location for STAFF and ADMIN alike, matching
+-- app.is_location_staff in student-auth: an admin needs an explicit assignment.
 CREATE FUNCTION inventory.is_staff_at(p_actor uuid, p_location uuid) RETURNS boolean LANGUAGE sql STABLE SET search_path = '' AS $$
   SELECT EXISTS (
     SELECT 1 FROM public."Membership" m
     JOIN public."Location" l ON l.id = p_location AND l."campusId" = m."campusId"
-    WHERE m.id = p_actor AND m."verifiedAt" IS NOT NULL AND (
-      m.role = 'ADMIN' OR (m.role = 'STAFF' AND EXISTS (
-        SELECT 1 FROM public."StaffAssignment" s WHERE s."membershipId" = m.id AND s."locationId" = p_location)))
+    JOIN public."StaffAssignment" s
+      ON s."membershipId" = m.id AND s."locationId" = l.id AND s."campusId" = l."campusId"
+    WHERE m.id = p_actor AND m."verifiedAt" IS NOT NULL AND m.role IN ('STAFF', 'ADMIN')
   )
+$$;
+
+-- Food may only enter inventory with complete batch metadata (API_CONTRACT:
+-- actual package photo, sealed shelf-stable contents, valid date metadata).
+-- Returns NULL when the lot may be received, otherwise the reason.
+CREATE FUNCTION inventory.food_receipt_problem(p_lot uuid) RETURNS text LANGUAGE sql STABLE SET search_path = '' AS $$
+  SELECT CASE
+    WHEN NOT (li."categoryId" = 'food' OR EXISTS (SELECT 1 FROM public."FoodDetails" fd WHERE fd."listingId" = li.id)) THEN NULL
+    WHEN f."stockLotId" IS NULL THEN 'Food batch details are required before receipt.'
+    WHEN length(btrim(f.photo)) = 0 THEN 'A photo of the actual package is required.'
+    WHEN f.opened THEN 'Only sealed food can be accepted.'
+    WHEN NOT f."shelfStable" THEN 'Only shelf-stable food can be accepted.'
+    WHEN length(btrim(f."dateLabel")) = 0 THEN 'The package date label is required.'
+    WHEN f."bestBy" < current_date THEN 'This food is past its date and cannot be accepted.'
+  END
+  FROM public."StockLot" l
+  JOIN public."Listing" li ON li.id = l."listingId"
+  LEFT JOIN public."StockFoodDetails" f ON f."stockLotId" = l.id
+  WHERE l.id = p_lot
 $$;
 
 -- Expire one active reservation whose hold has passed. Caller holds the lot lock.
@@ -178,6 +199,7 @@ CREATE FUNCTION inventory.receive(p_actor uuid, p_lot uuid, p_qty int, p_key tex
 DECLARE
   v_hash text := inventory.request_hash('receive', jsonb_build_object('lot_id', p_lot, 'qty', p_qty));
   v_prior jsonb;
+  v_problem text;
   l public."StockLot";
 BEGIN
   SELECT * INTO l FROM public."StockLot" WHERE id = p_lot;
@@ -195,6 +217,10 @@ BEGIN
   SELECT * INTO l FROM public."StockLot" WHERE id = p_lot FOR UPDATE;
   IF l.status <> 'PLEDGED' THEN
     RETURN inventory.finish(p_actor, p_key, inventory.err('INVALID_STATE', 'This lot has already been received or removed.'));
+  END IF;
+  v_problem := inventory.food_receipt_problem(p_lot);
+  IF v_problem IS NOT NULL THEN
+    RETURN inventory.finish(p_actor, p_key, inventory.err('VALIDATION_ERROR', v_problem));
   END IF;
   UPDATE public."StockLot" SET status = 'RECEIVED', "onHand" = p_qty, "receivedAt" = now() WHERE id = p_lot;
   PERFORM inventory.add_event(l."campusId", l.id, NULL, p_actor, 'RECEIPT', 0, p_qty, 0, 0,

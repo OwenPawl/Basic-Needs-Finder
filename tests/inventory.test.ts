@@ -190,20 +190,70 @@ async function campus(students = 2) {
   await add("staff-commons", id, "STAFF", true, locations.commons);
   await add("staff-library", id, "STAFF", true, locations.library);
   await add("staff-south", south, "STAFF", true, locations.south);
+  await add("admin-unassigned", id, "ADMIN", true);
+  await add("admin-commons", id, "ADMIN", true, locations.commons);
 
   // A pledged lot at loc-commons. received > 0 confirms receipt through the real command.
-  const lot = async (pledged: number, received = 0) => {
+  // category "food" makes it a food lot; batch adds its StockFoodDetails row.
+  type Batch = Partial<{
+    photo: string;
+    opened: boolean;
+    shelfStable: boolean;
+    dateLabel: string;
+    bestBy: string;
+    allergens: string[];
+    allergensKnown: boolean;
+  }>;
+  const lot = async (
+    pledged: number,
+    received = 0,
+    category = "supplies",
+    batch?: Batch,
+  ) => {
     const listing = randomUUID();
     const lotId = randomUUID();
     await db.query(
       `INSERT INTO "Listing" (id,"campusId","authorId","categoryId","locationId",title,description,kind,quantity,images,"isDemo","updatedAt")
-       VALUES ($1,$2,$3,'supplies',$4,'Fictional test item','Fictional test item','OFFER',$5,'{}',true,now())`,
-      [listing, id, people["student-donor"], locations.commons, pledged],
+       VALUES ($1,$2,$3,$6,$4,'Fictional test item','Fictional test item','OFFER',$5,'{}',true,now())`,
+      [
+        listing,
+        id,
+        people["student-donor"],
+        locations.commons,
+        pledged,
+        category,
+      ],
     );
     await db.query(
       'INSERT INTO "StockLot" (id,"campusId","listingId","locationId",pledged) VALUES ($1,$2,$3,$4,$5)',
       [lotId, id, listing, locations.commons, pledged],
     );
+    if (batch) {
+      const b = {
+        photo: "fixture://package.jpg",
+        opened: false,
+        shelfStable: true,
+        dateLabel: "Best by 2099-01-01",
+        bestBy: "2099-01-01",
+        allergens: [],
+        allergensKnown: false,
+        ...batch,
+      };
+      await db.query(
+        `INSERT INTO "StockFoodDetails" ("stockLotId","foodName",photo,"dateLabel","bestBy",opened,"shelfStable",storage,allergens,"allergensKnown")
+         VALUES ($1,'Fictional canned beans',$2,$3,$4,$5,$6,'Room temperature',$7,$8)`,
+        [
+          lotId,
+          b.photo,
+          b.dateLabel,
+          b.bestBy,
+          b.opened,
+          b.shelfStable,
+          b.allergens,
+          b.allergensKnown,
+        ],
+      );
+    }
     if (received)
       assert.equal(
         code(
@@ -297,6 +347,129 @@ test("receipts (R1-R8)", async () => {
     "rejected receipts write no events",
   );
   for (const l of [a, partial, pledged]) await assertInvariants(l);
+});
+
+test("food receipt requires a complete sealed, shelf-stable batch", async () => {
+  const { people, lot } = await campus();
+  const staff = people["staff-commons"];
+  const receive = async (l: string) =>
+    code(await call(db, "receive", staff, l, 1, key()));
+  assert.equal(
+    await receive(await lot(1, 0, "food")),
+    "VALIDATION_ERROR",
+    "missing batch details",
+  );
+  assert.equal(
+    await receive(await lot(1, 0, "food", { photo: " " })),
+    "VALIDATION_ERROR",
+    "no package photo",
+  );
+  assert.equal(
+    await receive(await lot(1, 0, "food", { opened: true })),
+    "VALIDATION_ERROR",
+    "opened",
+  );
+  assert.equal(
+    await receive(await lot(1, 0, "food", { shelfStable: false })),
+    "VALIDATION_ERROR",
+    "perishable",
+  );
+  assert.equal(
+    await receive(await lot(1, 0, "food", { dateLabel: "" })),
+    "VALIDATION_ERROR",
+    "no date label",
+  );
+  assert.equal(
+    await receive(await lot(1, 0, "food", { bestBy: "2000-01-01" })),
+    "VALIDATION_ERROR",
+    "past best-by",
+  );
+  const unknown = await lot(1, 0, "food", {
+    allergensKnown: false,
+    allergens: [],
+  });
+  assert.equal(
+    await receive(unknown),
+    "ok",
+    "unknown allergens stay unknown and are accepted",
+  );
+  const known = await lot(1, 0, "food", {
+    allergensKnown: true,
+    allergens: ["soy"],
+  });
+  assert.equal(await receive(known), "ok");
+  await assert.rejects(
+    lot(1, 0, "food", { allergensKnown: false, allergens: ["soy"] }),
+    { code: "23514" },
+    "unknown allergen state cannot carry a list",
+  );
+  const rejected = await lot(1, 0, "food", { opened: true });
+  await receive(rejected);
+  assert.deepEqual(await lotState(rejected), {
+    status: "pledged",
+    on_hand: 0,
+    reserved: 0,
+  });
+  assert.equal(await eventCount(rejected), 0);
+  for (const l of [unknown, known]) await assertInvariants(l);
+});
+
+test("admins need a location assignment for physical stock actions", async () => {
+  const { people, lot, reserve } = await campus();
+  const pledged = await lot(1);
+  assert.equal(
+    code(
+      await call(db, "receive", people["admin-unassigned"], pledged, 1, key()),
+    ),
+    "FORBIDDEN",
+    "unassigned admin cannot receive",
+  );
+  assert.equal(
+    code(await call(db, "receive", people["admin-commons"], pledged, 1, key())),
+    "ok",
+    "assigned admin can",
+  );
+  const hold = await reserve("student-0", pledged);
+  assert.equal(
+    code(await call(db, "pickup", people["admin-unassigned"], hold, key())),
+    "FORBIDDEN",
+  );
+  assert.equal(
+    code(await call(db, "cancel", people["admin-unassigned"], hold, key())),
+    "FORBIDDEN",
+  );
+  assert.equal(
+    code(
+      await call(
+        db,
+        "correct",
+        people["admin-unassigned"],
+        pledged,
+        2,
+        "Recount",
+        key(),
+      ),
+    ),
+    "FORBIDDEN",
+  );
+  assert.equal(
+    code(
+      await call(
+        db,
+        "remove",
+        people["admin-unassigned"],
+        pledged,
+        "Unsafe",
+        key(),
+      ),
+    ),
+    "FORBIDDEN",
+  );
+  assert.equal(
+    code(await call(db, "pickup", people["admin-commons"], hold, key())),
+    "ok",
+  );
+  await assertInvariants(pledged);
 });
 
 test("reservations (P2, V1-V9)", async () => {
