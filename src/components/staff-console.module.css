@@ -1,0 +1,238 @@
+/* /staff/ console. Colors follow the account page's WWU blue palette. */
+.page {
+  --navy: #07365b;
+  --blue: #006bab;
+  --ink: #1a3547;
+  --muted: #586b78;
+  --line: #dbe3e8;
+  --pale: #edf5fa;
+  --gold: #f2b23e;
+  --danger: #a3261b;
+  --ok: #1f6b3a;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.header h1 {
+  margin: 0;
+  color: var(--navy);
+  font-size: 1.6rem;
+}
+
+.header h1:focus {
+  outline: none;
+}
+
+.picker,
+.inline label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.card {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.card h2 {
+  margin: 0 0 8px;
+  color: var(--navy);
+  font-size: 1.15rem;
+}
+
+.hint,
+.food {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.counts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.counts div {
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--pale);
+}
+
+.counts dt {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.counts dd {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.list,
+.activity {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+
+.item h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+}
+
+.item p {
+  margin: 0 0 8px;
+}
+
+.activity li {
+  padding: 4px 0;
+  font-size: 0.9rem;
+  border-top: 1px solid var(--line);
+}
+
+.inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.page input,
+.page select,
+.page button {
+  min-height: 44px;
+  font: inherit;
+}
+
+.page input,
+.page select {
+  padding: 6px 10px;
+  border: 1px solid #8aa0ad;
+  border-radius: 8px;
+}
+
+.page button {
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--blue);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.page button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.page button:focus-visible,
+.page input:focus-visible,
+.page select:focus-visible,
+.link:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.secondary {
+  background: #fff;
+  color: var(--blue);
+  border: 2px solid var(--blue);
+}
+
+.danger {
+  background: var(--danger);
+}
+
+.badgePending,
+.badgeOk,
+.badgeWarn {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.badgePending {
+  background: #fff4dc;
+  color: #6b4a00;
+}
+
+.badgeOk {
+  background: #e3f4e8;
+  color: var(--ok);
+}
+
+.badgeWarn {
+  background: #fbe4e1;
+  color: var(--danger);
+}
+
+.code {
+  font-family: "Courier New", monospace;
+  letter-spacing: 0.08em;
+}
+
+.live:empty {
+  display: none;
+}
+
+.ok,
+.error {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.ok {
+  background: #e3f4e8;
+  color: var(--ok);
+}
+
+.error {
+  background: #fbe4e1;
+  color: var(--danger);
+}
+
+.link {
+  color: var(--blue);
+  font-weight: 700;
+}
+
+@media (max-width: 480px) {
+  .inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
