@@ -12,7 +12,6 @@ BEGIN
  IF l.id IS NULL OR NOT app.is_verified_member(l."campusId") THEN PERFORM app.fail('NOT_FOUND'); END IF;
  actor:=app.require_verified_member(l."campusId");
  IF op IN ('receive','pickup','correct','remove') THEN actor:=app.require_location_staff(l."locationId"); END IF;
- IF op='cancel' AND r."memberId"<>actor THEN PERFORM app.fail('NOT_FOUND'); END IF;
  CASE op
  WHEN 'reserve' THEN result:=inventory.reserve(actor,l.id,qty,request_key);
  WHEN 'cancel' THEN result:=inventory.cancel(actor,r.id,request_key);
@@ -45,7 +44,7 @@ DECLARE actor uuid; lid uuid;
 BEGIN
  actor:=app.require_verified_member(campus_id);
  IF NOT EXISTS(SELECT 1 FROM public."Location" l WHERE l."campusId"=campus_id AND app.is_location_staff(l.id)) THEN PERFORM app.fail('FORBIDDEN'); END IF;
- FOR lid IN SELECT s.id FROM public."StockLot" s WHERE s."campusId"=campus_id AND app.is_location_staff(s."locationId") ORDER BY s.id FOR UPDATE OF s LOOP PERFORM inventory.expire_due_on_lot(lid); END LOOP;
+ FOR lid IN SELECT s.id FROM public."StockLot" s WHERE s."campusId"=campus_id AND app.is_location_staff(s."locationId") ORDER BY s.id FOR UPDATE OF s SKIP LOCKED LOOP PERFORM inventory.expire_due_on_lot(lid); END LOOP;
  RETURN jsonb_build_object(
  'locations',(SELECT coalesce(jsonb_agg(jsonb_build_object('id',l.id,'name',l.name,'building',l.building,'hours',l.hours,'instructions',l.instructions)),'[]'::jsonb) FROM public."Location" l WHERE l."campusId"=campus_id AND app.is_location_staff(l.id)),
  'lots',(SELECT coalesce(jsonb_agg(inventory.lot_json(s.id)||jsonb_build_object('listing_id',l.id,'title',l.title,'location_id',s."locationId",'food',app.listing_json(l.id)->'food','images',to_jsonb(l.images)) ORDER BY l."createdAt" DESC),'[]'::jsonb) FROM public."StockLot" s JOIN public."Listing" l ON l.id=s."listingId" WHERE s."campusId"=campus_id AND app.is_location_staff(s."locationId")),
