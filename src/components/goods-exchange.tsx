@@ -224,6 +224,7 @@ export function GoodsExchange() {
             Give & find goods
           </Link>
           <Link href="/account/">My account</Link>
+          <Link href="/inbox/">Messages</Link>
         </nav>
       </header>
       <main id="goods-main" className="exchange-page">
@@ -694,7 +695,11 @@ export function GoodsExchange() {
                     </button>
                   )}
                 <Link
-                  href={`/inbox/?listing=${selected.id}`}
+                  href={
+                    selected.is_owner
+                      ? "/inbox/"
+                      : `/inbox/?listing=${selected.id}`
+                  }
                   className="button secondary"
                 >
                   Respond privately <ArrowRight size={16} />
@@ -711,6 +716,7 @@ export function GoodsExchange() {
                     </Link>
                   )}
               </div>
+              <ReportListing listingId={selected.id} />
               <p className="goods-detail-note">
                 No public contact details are shown. Share only what is needed
                 to arrange your exchange.
@@ -1192,5 +1198,48 @@ function ListingEditor({
         </button>
       </div>
     </form>
+  );
+}
+
+function ReportListing({ listingId }: { listingId: string }) {
+  const [reason, setReason] = useState("");
+  const [status, setStatus] = useState("");
+  const [busy, setBusy] = useState(false);
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (busy) return;
+    setBusy(true);
+    const r = await getSupabaseClient()!.rpc("report_listing", {
+      listing_id: listingId,
+      reason,
+    });
+    setBusy(false);
+    setStatus(
+      r.error
+        ? "The report was not confirmed. Please try again."
+        : "Report sent to staff assigned to this location.",
+    );
+    if (!r.error) setReason("");
+  }
+  return (
+    <details className="goods-report">
+      <summary>Report this listing</summary>
+      <form onSubmit={submit}>
+        <label>
+          What should staff review?
+          <textarea
+            required
+            minLength={5}
+            maxLength={1000}
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+          />
+        </label>
+        <button className="button secondary" disabled={busy}>
+          {busy ? "Sending…" : "Send report"}
+        </button>
+      </form>
+      <p role="status">{status}</p>
+    </details>
   );
 }

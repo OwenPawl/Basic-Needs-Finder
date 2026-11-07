@@ -866,3 +866,27 @@
     transition: none;
   }
 }
+
+.goods-report {
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+  padding-top: 15px;
+  font-size: 13px;
+}
+.goods-report summary {
+  cursor: pointer;
+  color: var(--blue);
+  padding: 10px 0;
+}
+.goods-report label {
+  display: grid;
+  gap: 6px;
+}
+.goods-report textarea {
+  font: inherit;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  margin-bottom: 10px;
+  min-height: 80px;
+}

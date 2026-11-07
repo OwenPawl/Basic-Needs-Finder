@@ -402,23 +402,111 @@ test("photo RLS allows listing viewers but not unrelated campuses, and protects 
     assert.equal(r.rowCount, 1);
   }));
 
-test('authenticated inventory wrappers enforce actor/location and complete receipt reserve pickup', async()=>fixture(async(db,f)=>{
- await as(db,f.alice.subject);const listing=await save(db,f.campus,randomUUID(),input(f));const lot=listing.data.lots[0].lot_id;
- await rejected(db,()=>db.query('SELECT exchange_receive($1,2,$2)',[lot,randomUUID()]),'FORBIDDEN');
- await db.query('RESET ROLE');await db.query('UPDATE "Membership" SET role=\'STAFF\' WHERE id=$1',[f.alice.membership]);await db.query('INSERT INTO "StaffAssignment"(id,"campusId","membershipId","locationId")VALUES($1,$2,$3,$4)',[randomUUID(),f.campus,f.alice.membership,f.location]);
- await as(db,f.alice.subject);const key=randomUUID();const received=(await db.query('SELECT exchange_receive($1,2,$2) r',[lot,key])).rows[0].r;assert.equal(received.data.lot.on_hand,2);assert.equal((await db.query('SELECT exchange_receive($1,2,$2) r',[lot,key])).rows[0].r.data.lot.on_hand,2);
- await as(db,f.bob.subject);const reserve=(await db.query('SELECT exchange_reserve($1,1,$2) r',[lot,randomUUID()])).rows[0].r;const rid=reserve.data.reservation.reservation_id;
- assert.equal((await db.query('SELECT exchange_my_reservations($1) r',[f.campus])).rows[0].r.length,1);
- await rejected(db,()=>db.query('SELECT exchange_staff_inventory($1)',[f.campus]),'FORBIDDEN');
- await as(db,f.outsider.subject);await rejected(db,()=>db.query('SELECT exchange_cancel($1,$2)',[rid,randomUUID()]),'NOT_FOUND');
- await as(db,f.alice.subject);assert.equal((await db.query('SELECT exchange_staff_inventory($1) r',[f.campus])).rows[0].r.lots.length,1);const picked=(await db.query('SELECT exchange_pickup($1,$2) r',[rid,randomUUID()])).rows[0].r;assert.equal(picked.data.lot.on_hand,1);assert.equal(picked.data.lot.reserved,0);
-}));
+test("authenticated inventory wrappers enforce actor/location and complete receipt reserve pickup", async () =>
+  fixture(async (db, f) => {
+    await as(db, f.alice.subject);
+    const listing = await save(db, f.campus, randomUUID(), input(f));
+    const lot = listing.data.lots[0].lot_id;
+    await rejected(
+      db,
+      () => db.query("SELECT exchange_receive($1,2,$2)", [lot, randomUUID()]),
+      "FORBIDDEN",
+    );
+    await db.query("RESET ROLE");
+    await db.query("UPDATE \"Membership\" SET role='STAFF' WHERE id=$1", [
+      f.alice.membership,
+    ]);
+    await db.query(
+      'INSERT INTO "StaffAssignment"(id,"campusId","membershipId","locationId")VALUES($1,$2,$3,$4)',
+      [randomUUID(), f.campus, f.alice.membership, f.location],
+    );
+    await as(db, f.alice.subject);
+    const key = randomUUID();
+    const received = (
+      await db.query("SELECT exchange_receive($1,2,$2) r", [lot, key])
+    ).rows[0].r;
+    assert.equal(received.data.lot.on_hand, 2);
+    assert.equal(
+      (await db.query("SELECT exchange_receive($1,2,$2) r", [lot, key])).rows[0]
+        .r.data.lot.on_hand,
+      2,
+    );
+    await as(db, f.bob.subject);
+    const reserve = (
+      await db.query("SELECT exchange_reserve($1,1,$2) r", [lot, randomUUID()])
+    ).rows[0].r;
+    const rid = reserve.data.reservation.reservation_id;
+    assert.equal(
+      (await db.query("SELECT exchange_my_reservations($1) r", [f.campus]))
+        .rows[0].r.length,
+      1,
+    );
+    await rejected(
+      db,
+      () => db.query("SELECT exchange_staff_inventory($1)", [f.campus]),
+      "FORBIDDEN",
+    );
+    await as(db, f.outsider.subject);
+    await rejected(
+      db,
+      () => db.query("SELECT exchange_cancel($1,$2)", [rid, randomUUID()]),
+      "NOT_FOUND",
+    );
+    await as(db, f.alice.subject);
+    assert.equal(
+      (await db.query("SELECT exchange_staff_inventory($1) r", [f.campus]))
+        .rows[0].r.lots.length,
+      1,
+    );
+    const picked = (
+      await db.query("SELECT exchange_pickup($1,$2) r", [rid, randomUUID()])
+    ).rows[0].r;
+    assert.equal(picked.data.lot.on_hand, 1);
+    assert.equal(picked.data.lot.reserved, 0);
+  }));
 
-test('message retries return one persisted message and reject changed payloads',async()=>fixture(async(db,f)=>{
- await as(db,f.alice.subject);const listing=await save(db,f.campus,randomUUID(),input(f,{kind:'request',images:[]}));await as(db,f.bob.subject);
- const cid=(await db.query('SELECT start_conversation($1) r',[listing.data.id])).rows[0].r.conversation_id;const key=randomUUID();
- const first=(await db.query('SELECT send_message_once($1,$2,$3) r',[cid,'Can I help?',key])).rows[0].r;
- const second=(await db.query('SELECT send_message_once($1,$2,$3) r',[cid,'Can I help?',key])).rows[0].r;assert.equal(first.data.id,second.data.id);
- assert.equal((await db.query('SELECT conversation_messages($1) r',[cid])).rows[0].r.messages.length,1);
- assert.equal((await db.query('SELECT send_message_once($1,$2,$3) r',[cid,'Changed',key])).rows[0].r.error.code,'IDEMPOTENCY_CONFLICT');
-}));
+test("message retries return one persisted message and reject changed payloads", async () =>
+  fixture(async (db, f) => {
+    await as(db, f.alice.subject);
+    const listing = await save(
+      db,
+      f.campus,
+      randomUUID(),
+      input(f, { kind: "request", images: [] }),
+    );
+    await as(db, f.bob.subject);
+    const cid = (
+      await db.query("SELECT start_conversation($1) r", [listing.data.id])
+    ).rows[0].r.conversation_id;
+    const key = randomUUID();
+    const first = (
+      await db.query("SELECT send_message_once($1,$2,$3) r", [
+        cid,
+        "Can I help?",
+        key,
+      ])
+    ).rows[0].r;
+    const second = (
+      await db.query("SELECT send_message_once($1,$2,$3) r", [
+        cid,
+        "Can I help?",
+        key,
+      ])
+    ).rows[0].r;
+    assert.equal(first.data.id, second.data.id);
+    assert.equal(
+      (await db.query("SELECT conversation_messages($1) r", [cid])).rows[0].r
+        .messages.length,
+      1,
+    );
+    assert.equal(
+      (
+        await db.query("SELECT send_message_once($1,$2,$3) r", [
+          cid,
+          "Changed",
+          key,
+        ])
+      ).rows[0].r.error.code,
+      "IDEMPOTENCY_CONFLICT",
+    );
+  }));

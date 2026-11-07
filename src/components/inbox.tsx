@@ -109,26 +109,47 @@ export function Inbox() {
     log.current?.lastElementChild?.scrollIntoView({ block: "nearest" });
   }, [thread]);
 
-  useEffect(() => { if(view!=="ready")return; const timer=setInterval(()=>{if(document.visibilityState==="visible"){void loadList();if(thread)void open(thread.conversation_id);}},10000);return()=>clearInterval(timer); },[view,thread?.conversation_id,loadList,open]);
+  useEffect(() => {
+    if (view !== "ready") return;
+    const timer = setInterval(() => {
+      if (document.visibilityState === "visible") {
+        void loadList();
+        if (thread) void open(thread.conversation_id);
+      }
+    }, 10000);
+    return () => clearInterval(timer);
+  }, [view, thread?.conversation_id, loadList, open]);
 
   async function send(event: React.FormEvent) {
     event.preventDefault();
     if (!thread || !draft.trim() || sendingRef.current) return;
-    sendingRef.current=true;
-    const identity=thread.conversation_id+"/"+draft.trim();
-    if(previousBody.current!==identity||!requestKey.current){previousBody.current=identity;requestKey.current=crypto.randomUUID();}
+    sendingRef.current = true;
+    const identity = thread.conversation_id + "/" + draft.trim();
+    if (previousBody.current !== identity || !requestKey.current) {
+      previousBody.current = identity;
+      requestKey.current = crypto.randomUUID();
+    }
     setBusy(true);
     setError("");
-    const { data: sent, error: e } = await client.current!.rpc("send_message_once", {
-      conversation_id: thread.conversation_id,
-      body: draft,
-      idempotency_key: requestKey.current,
-    });
+    const { data: sent, error: e } = await client.current!.rpc(
+      "send_message_once",
+      {
+        conversation_id: thread.conversation_id,
+        body: draft,
+        idempotency_key: requestKey.current,
+      },
+    );
     setBusy(false);
-    sendingRef.current=false;
-    if(sent?.error)return setError(friendly({message:sent.error.code},"Your message was not confirmed. Try again."));
+    sendingRef.current = false;
+    if (sent?.error)
+      return setError(
+        friendly(
+          { message: sent.error.code },
+          "Your message was not confirmed. Try again.",
+        ),
+      );
     if (e) return setError(friendly(e, "Your message wasn’t sent. Try again."));
-    requestKey.current="";
+    requestKey.current = "";
     setDraft("");
     await open(thread.conversation_id);
     await loadList();
@@ -263,7 +284,8 @@ export function Inbox() {
                     </label>
                     <p id="composer-help" className={styles.help}>
                       Don’t share personal contact details. Meet only at the
-                      listed campus location. Ctrl/⌘+Enter sends. Messages refresh every 10 seconds.
+                      listed campus location. Ctrl/⌘+Enter sends. Messages
+                      refresh every 10 seconds.
                     </p>
                     <button
                       className={base.primary}

@@ -59,7 +59,7 @@ export async function saveExchangeListing(
     expected_updated_at: updatedAt,
   });
   if (error) throw new Error(exchangeError(error));
-  if (data?.error) throw new Error(exchangeError(data.error));
+  if (data?.error) throw new Error(exchangeError({ message: data.error.code }));
   return listingSchema.parse(data.data);
 }
 export async function uploadListingPhoto(file: File) {

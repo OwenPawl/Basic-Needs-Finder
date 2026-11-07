@@ -6,7 +6,7 @@ Food and basic-needs support for Western Washington University students, on camp
 
 **Current status:** an anonymous public directory with 11 real WWU/Bellingham resources, search, location/type/service-day filters, provider details, directions, and a printable/downloadable resource plan. Each resource links to an official source with a checked date. No AI imagery, fabricated public inventory, student-data collection, location request, or analytics. Plan selections live in page memory and clear on reload.
 
-The goods exchange at `/exchange/` implements offers, requests, owner edits, real photo uploads, and category/location/availability search. Offers remain pledged until staff confirms receipt. `/account/` implements verified campus sign-in. Hosted configuration and the complete receipt/reservation/messaging flow must be verified before describing them as operational. The PostgreSQL foundation and fictional test fixtures remain available for their implementation; those fixtures are not imported into the public directory.
+The goods exchange at `/exchange/` implements offers, requests, owner edits, real photo uploads, and category/location/availability search. Offers remain pledged until staff confirms receipt. `/account/` implements verified campus sign-in. Reservations, staff receipt/pickup/correction/report views, and private listing conversations are implemented. The initial six migrations are installed in the hosted project; final API installation and email delivery are still pending. Full signed-in HTTP/browser verification is not yet complete. The PostgreSQL foundation and fictional test fixtures remain available for their implementation; those fixtures are not imported into the public directory.
 
 ## Run the preview
 
