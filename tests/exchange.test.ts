@@ -414,3 +414,11 @@ test('authenticated inventory wrappers enforce actor/location and complete recei
  await as(db,f.alice.subject);assert.equal((await db.query('SELECT exchange_staff_inventory($1) r',[f.campus])).rows[0].r.lots.length,1);const picked=(await db.query('SELECT exchange_pickup($1,$2) r',[rid,randomUUID()])).rows[0].r;assert.equal(picked.data.lot.on_hand,1);assert.equal(picked.data.lot.reserved,0);
 }));
 
+test('message retries return one persisted message and reject changed payloads',async()=>fixture(async(db,f)=>{
+ await as(db,f.alice.subject);const listing=await save(db,f.campus,randomUUID(),input(f,{kind:'request',images:[]}));await as(db,f.bob.subject);
+ const cid=(await db.query('SELECT start_conversation($1) r',[listing.data.id])).rows[0].r.conversation_id;const key=randomUUID();
+ const first=(await db.query('SELECT send_message_once($1,$2,$3) r',[cid,'Can I help?',key])).rows[0].r;
+ const second=(await db.query('SELECT send_message_once($1,$2,$3) r',[cid,'Can I help?',key])).rows[0].r;assert.equal(first.data.id,second.data.id);
+ assert.equal((await db.query('SELECT conversation_messages($1) r',[cid])).rows[0].r.messages.length,1);
+ assert.equal((await db.query('SELECT send_message_once($1,$2,$3) r',[cid,'Changed',key])).rows[0].r.error.code,'IDEMPOTENCY_CONFLICT');
+}));
