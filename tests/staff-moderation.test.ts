@@ -383,6 +383,85 @@ test("reported listings can be removed with a reason, withdrawing pledged stock"
   });
 });
 
+test("removing a listing withdraws received stock and cancels its active holds", async () => {
+  await transaction(async (db) => {
+    const { subjects, commons, notebooks } = await fixture(db);
+    await as(db, subjects["staff-commons"]);
+    assert.ok(
+      (await rpc(db, "exchange_receive", notebooks.lotId, 2, key())).data,
+    );
+    await as(db, subjects.student);
+    const held = (await rpc(db, "exchange_reserve", notebooks.lotId, 1, key()))
+      .data.reservation.reservation_id;
+    await as(db, subjects["staff-commons"]);
+    assert.equal((await counts(db, commons)).active_holds, 1);
+    await rpc(
+      db,
+      "staff_moderate_listing",
+      notebooks.listingId,
+      "remove",
+      "Item is not allowed here",
+      null,
+    );
+    await asOwner(db);
+    const lot = await db.query(
+      'SELECT lower(status::text) AS s, "onHand" AS on_hand, reserved FROM "StockLot" WHERE id=$1',
+      [notebooks.lotId],
+    );
+    assert.deepEqual(lot.rows[0], { s: "removed", on_hand: 0, reserved: 0 });
+    const hold = await db.query(
+      'SELECT lower(status::text) AS s FROM "Reservation" WHERE id=$1',
+      [held],
+    );
+    assert.equal(
+      hold.rows[0].s,
+      "cancelled",
+      "the active hold is cancelled in the same transaction",
+    );
+    const events = await db.query(
+      'SELECT lower(kind::text) AS k FROM "InventoryEvent" WHERE "stockLotId"=$1 ORDER BY k',
+      [notebooks.lotId],
+    );
+    assert.deepEqual(
+      events.rows.map((e) => e.k),
+      ["cancel", "receipt", "remove", "reserve"],
+      "removal is audited",
+    );
+    await as(db, subjects.student);
+    assert.equal(
+      (await rpc(db, "exchange_reserve", notebooks.lotId, 1, key())).error.code,
+      "NOT_RESERVABLE",
+    );
+    await as(db, subjects["staff-commons"]);
+    assert.equal(
+      (await rpc(db, "exchange_pickup", held, key())).error.code,
+      "INVALID_STATE",
+      "a remembered reservation id cannot be collected",
+    );
+    assert.equal(
+      (await rpc(db, "exchange_receive", notebooks.lotId, 2, key())).error.code,
+      "INVALID_STATE",
+    );
+    const c = await counts(db, commons);
+    assert.equal(c.available_units, 0);
+    assert.equal(c.active_holds, 0);
+    await rpc(
+      db,
+      "staff_moderate_listing",
+      notebooks.listingId,
+      "restore",
+      "Author clarified the post",
+      null,
+    );
+    await as(db, subjects.student);
+    assert.equal(
+      (await rpc(db, "exchange_reserve", notebooks.lotId, 1, key())).error.code,
+      "NOT_RESERVABLE",
+      "restoring the listing does not revive withdrawn stock",
+    );
+  });
+});
+
 test("reports can be dismissed with a recorded reason", async () => {
   await transaction(async (db) => {
     const { subjects, commons, oats } = await fixture(db);

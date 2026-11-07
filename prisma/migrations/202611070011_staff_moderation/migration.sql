@@ -1,4 +1,4 @@
--- staff-console follow-up to the goods exchange: listing moderation with
+-- staff-console follow-up to the goods exchange (after hosted migrations 1-10): listing moderation with
 -- recorded reasons, report dismissal with a reason, a private moderation log,
 -- and per-location summary counts. Stock actions stay on the exchange_*
 -- inventory RPCs (202611070007_exchange_operations). These RPCs raise
@@ -30,11 +30,15 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $$
   )
 $$;
 
--- Remove or restore a listing. Removal also withdraws any not-yet-received
--- pledged stock for it through inventory.remove, so it can never be received;
--- received stock stays under exchange_remove. Restoring does not revive
--- withdrawn pledges. An open report on that listing can be resolved in the
--- same call.
+-- Remove or restore a listing. Removal withdraws every lot of that listing
+-- that is not already removed, pledged or received, through inventory.remove
+-- in the same transaction: active holds are cancelled with audit events and
+-- stock leaves inventory, so a remembered lot or reservation id cannot reserve,
+-- receive or collect it afterwards (inventory.reserve and resolve_reservation
+-- do not consult Listing.status). Lock order is Listing, then StockLot, then
+-- Reservation, matching save_exchange_listing and inventory.*. Restoring the
+-- listing does not revive withdrawn stock. An open report on that listing can
+-- be resolved in the same call.
 CREATE FUNCTION public.staff_moderate_listing(listing_id uuid, action text, reason text, report_id uuid DEFAULT NULL) RETURNS jsonb
 LANGUAGE plpgsql VOLATILE SECURITY DEFINER SET search_path = '' AS $$
 DECLARE
@@ -60,7 +64,7 @@ BEGIN
   IF action = 'remove' THEN
     IF li.status = 'REMOVED' THEN PERFORM app.fail('INVALID_STATE', 'listing is already removed'); END IF;
     UPDATE public."Listing" SET status = 'REMOVED', "updatedAt" = now() WHERE id = li.id;
-    FOR v_lot IN SELECT s.id FROM public."StockLot" s WHERE s."listingId" = li.id AND s.status = 'PLEDGED' ORDER BY s.id LOOP
+    FOR v_lot IN SELECT s.id FROM public."StockLot" s WHERE s."listingId" = li.id AND s.status <> 'REMOVED' ORDER BY s.id LOOP
       v_result := inventory.remove(v_actor, v_lot, 'Listing removed: ' || v_reason, 'moderation:' || li.id || ':' || v_lot);
       IF NOT (v_result->>'ok')::boolean THEN PERFORM app.fail(v_result->'error'->>'code'); END IF;
     END LOOP;
