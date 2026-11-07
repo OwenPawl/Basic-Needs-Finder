@@ -159,7 +159,7 @@ export function Inbox() {
     <main className={base.page}>
       <div className={base.glow} aria-hidden="true" />
       <a className={`${base.back} ${styles.wide}`} href="../">
-        <span aria-hidden="true">←</span> Back to Basic Needs Finder
+        <span aria-hidden="true">←</span> Back to Viking Table
       </a>
       <section
         className={`${base.card} ${styles.card}`}

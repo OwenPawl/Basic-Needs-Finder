@@ -68,7 +68,7 @@ export function filterDirectory(
 }
 export function resourcePlanText(resources: CampusResource[]) {
   return [
-    "BASIC NEEDS FINDER — WWU & BELLINGHAM",
+    "VIKING TABLE — WWU & BELLINGHAM",
     "Listed hours are not a stock guarantee. Confirm hours and holiday closures with the provider.",
     ...resources.map(
       (r) =>

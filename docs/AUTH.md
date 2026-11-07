@@ -63,7 +63,7 @@ Production migrations 0001–0010 and 0012 and the real WWU campus/mail-desk con
 
 1. Apply the migrations in order (`prisma migrate deploy` with the project's database URL, from a trusted machine). Do **not** run `db:test-auth-shim` there: it refuses non-`_test` databases and Supabase roles anyway.
 2. Auth → Providers → Email: enabled, **Confirm email** on.
-3. Auth → Email Templates → *Magic Link* (also used for OTP sign-in): include the code, e.g. `<p>Your Basic Needs Finder code is <strong>{{ .Token }}</strong></p>`. Without `{{ .Token }}` Supabase sends only a link, and the static page has no link handler.
+3. Auth → Email Templates → *Magic Link* (also used for OTP sign-in): include the code, e.g. `<p>Your Viking Table code is <strong>{{ .Token }}</strong></p>`. Without `{{ .Token }}` Supabase sends only a link, and the static page has no link handler.
 4. Auth → URL Configuration: Site URL `https://owenpawl.github.io/Basic-Needs-Finder/`.
 5. Build configuration: set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (the publishable/anon key, never the service-role key) for `npm run build:pages`. Without them `/account/` shows “Accounts are coming soon”.
 6. Configure the real campus with `scripts/wwu-campus.sql` and grant the first admin with the operator SQL above only after identifying and authorizing that verified account. This independent hackathon prototype checks ownership of a WWU email; it does not imply university endorsement or approval of donation handling at the selected mail desks.

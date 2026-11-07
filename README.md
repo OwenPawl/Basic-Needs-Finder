@@ -1,4 +1,4 @@
-# Basic Needs Finder
+# Viking Table
 
 Food and basic-needs support for Western Washington University students, on campus and around Bellingham.
 

@@ -215,7 +215,7 @@ export function GoodsExchange() {
             W<span>+</span>
           </span>
           <span>
-            Basic Needs Finder<small>WESTERN · BELLINGHAM</small>
+            Viking Table<small>WESTERN · BELLINGHAM</small>
           </span>
         </Link>
         <nav aria-label="Exchange navigation">
