@@ -59,7 +59,7 @@ When a later migration adds a table in `public`, enable RLS on it and revoke `an
 
 ## Hosted setup and remaining configuration
 
-Production migrations 0001–0010 and the real WWU campus/mail-desk configuration are installed in the hosted project. There are no seeded users, staff assignments, or fictional goods. Custom SMTP is configured on the free plan, both sign-up and sign-in templates include `{{ .Token }}`, and the Site URL is the GitHub Pages URL. Sender verification and a full hosted sign-in test are still pending. For a new installation:
+Production migrations 0001–0010 and 0012 and the real WWU campus/mail-desk configuration are installed in the hosted project. There are no seeded users, staff assignments, or fictional goods. Custom SMTP is configured on the free plan, both sign-up and sign-in templates include `{{ .Token }}`, and the Site URL is the GitHub Pages URL. The SMTP sender is verified; a full hosted sign-in test is still pending. For a new installation:
 
 1. Apply the migrations in order (`prisma migrate deploy` with the project's database URL, from a trusted machine). Do **not** run `db:test-auth-shim` there: it refuses non-`_test` databases and Supabase roles anyway.
 2. Auth → Providers → Email: enabled, **Confirm email** on.
@@ -96,6 +96,6 @@ Production migrations 0001–0010 and the real WWU campus/mail-desk configuratio
 ## Not done yet
 
 - **Not exercised end to end:** real Supabase email delivery, code entry, profile, campus verification and sign-out against a hosted or local Supabase stack. The page was checked in a browser for the “not connected” state and the send-code error path only; the database side is covered by `tests/auth.test.ts` with the test stand-in, which does not prove the hosted flow.
-- Verifying the SMTP sender, proving actual email delivery, and assigning an authorized first staff/admin account.
+- Proving actual email delivery and assigning an authorized first staff/admin account.
 - Rate limiting and abuse controls beyond what Supabase Auth provides.
 - Future migrations still need RLS and explicit grants on each new table. The default-privilege revoke covers objects created by the migration role; on plain PostgreSQL that test passes trivially because nothing is granted by default.
