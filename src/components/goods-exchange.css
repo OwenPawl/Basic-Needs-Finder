@@ -890,3 +890,15 @@
   margin-bottom: 10px;
   min-height: 80px;
 }
+/* Home banner: goods exchange and community food side by side. */
+.exchange-banner-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+@media (max-width: 620px) {
+  .exchange-banner-actions {
+    width: 100%;
+  }
+}

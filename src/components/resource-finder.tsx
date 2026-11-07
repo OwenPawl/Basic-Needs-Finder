@@ -121,6 +121,7 @@ export function ResourceFinder({ resources }: { resources: CampusResource[] }) {
         <nav aria-label="Main navigation">
           <a href="#finder">Find support</a>
           <Link href="/exchange/">Give &amp; find goods</Link>
+          <Link href="/food/">Homemade food</Link>
           <a href="#about">About</a>
         </nav>
         <a href="#my-plan" className="plan-link">
@@ -137,9 +138,14 @@ export function ResourceFinder({ resources }: { resources: CampusResource[] }) {
               with other Western students. Offers and requests belong here, too.
             </p>
           </div>
-          <Link href="/exchange/" className="button primary">
-            Open the goods exchange <ArrowRight size={17} />
-          </Link>
+          <div className="exchange-banner-actions">
+            <Link href="/exchange/" className="button primary">
+              Open the goods exchange <ArrowRight size={17} />
+            </Link>
+            <Link href="/food/" className="button secondary">
+              Share or find homemade food <ArrowRight size={17} />
+            </Link>
+          </div>
         </section>
         <section className="hero" aria-labelledby="hero-title">
           <div className="hero-copy">
